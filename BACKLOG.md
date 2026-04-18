@@ -1,7 +1,8 @@
 # BACKLOG - Improvements
 
 - [x] Add particle effects when obstacles are passed or when player dies
-- [ ] Implement a 'Combo' system for near-misses
+- [x] Add particle effects when obstacles are passed or when player dies
+- [x] Implement a 'Combo' system for near-misses
 - [ ] Add sound effects (SFX) for start, collision, and score
 - [ ] Create a main menu with a high-score display
 - [ ] Implement 'Power-up' spawning (e.g., a shield)
