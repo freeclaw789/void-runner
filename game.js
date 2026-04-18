@@ -118,6 +118,8 @@ window.addEventListener('mousedown', (e) => {
         obstacles = [];
         scoreEl.innerText = score;
         msgEl.style.display = 'none';
+        mainMenuEl.style.display = 'none';
+        uiEl.style.display = 'flex';
         spawnObstacle();
     } else {
         player.targetX = e.clientX;
