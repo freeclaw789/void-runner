@@ -2,6 +2,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const msgEl = document.getElementById('msg');
+const mainMenuEl = document.getElementById('main-menu');
+const uiEl = document.getElementById('ui');
 
 let width, height, player, obstacles, score, gameActive = false, speed = 5;
 
@@ -104,6 +106,8 @@ window.addEventListener('touchstart', (e) => {
         obstacles = [];
         scoreEl.innerText = score;
         msgEl.style.display = 'none';
+        mainMenuEl.style.display = 'none';
+        uiEl.style.display = 'flex';
         spawnObstacle();
     } else {
         player.targetX = e.touches[0].clientX;
