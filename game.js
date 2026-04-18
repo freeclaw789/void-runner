@@ -82,8 +82,18 @@ function gameLoop() {
             o.draw();
             if (checkCollision(player, o)) {
                 gameActive = false;
-                msgEl.innerText = 'GAME OVER\nTAP TO RESTART';
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem('voidRunnerHighScore', highScore);
+                    highScoreEl.innerText = `HIGH SCORE: ${highScore}`;
+                }
+                msgEl.innerText = 'GAME OVER';
                 msgEl.style.display = 'block';
+                setTimeout(() => {
+                    mainMenuEl.style.display = 'flex';
+                    uiEl.style.display = 'none';
+                    msgEl.style.display = 'none';
+                }, 1500);
             }
             if (o.y > height + o.r) {
                 obstacles.splice(i, 1);
