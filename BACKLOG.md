@@ -17,7 +17,7 @@
 - [x] Add 'Magnet' power-up (pulls gems toward player)
 - [x] Implement 'Homing Missiles' (obstacles that track player x-position)
 - [ ] Create 'Sector Transitions' (change visuals/patterns every 50 points)
-- [ ] Add visual player trails (dynamic based on speed)
+- [x] Add visual player trails (dynamic based on speed)
 - [ ] Implement 'Rotating Walls' (wide obstacles with moving gaps)
 - [ ] Add a Local Top 5 Leaderboard (persistence via localStorage)
 - [ ] Implement dynamic parallax background that reacts to speed

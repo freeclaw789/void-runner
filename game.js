@@ -76,15 +76,40 @@ class Player {
         this.targetX = this.x;
         this.magnetActive = false;
         this.magnetTimer = 0;
+        this.trail = [];
     }
     update() {
         this.x += (this.targetX - this.x) * 0.2;
+        
+        // Update trail
+        this.trail.push({x: this.x, y: this.y});
+        const maxTrail = Math.floor(10 + speed);
+        if (this.trail.length > maxTrail) this.trail.shift();
+
         if (this.magnetActive) {
             this.magnetTimer--;
             if (this.magnetTimer <= 0) this.magnetActive = false;
         }
     }
     draw() {
+        // Draw trail
+        if (this.trail.length > 1) {
+            ctx.beginPath();
+            ctx.lineWidth = this.r * 0.8;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            for (let i = 0; i < this.trail.length - 1; i++) {
+                const alpha = i / this.trail.length;
+                ctx.strokeStyle = this.magnetActive 
+                    ? `rgba(255, 255, 0, ${alpha * 0.5})` 
+                    : `rgba(0, 255, 255, ${alpha * 0.5})`;
+                ctx.beginPath();
+                ctx.moveTo(this.trail[i].x, this.trail[i].y);
+                ctx.lineTo(this.trail[i+1].x, this.trail[i+1].y);
+                ctx.stroke();
+            }
+        }
+
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
         ctx.fillStyle = this.magnetActive ? '#ff0' : '#0ff';
