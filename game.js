@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const msgEl = document.getElementById('msg');
 const mainMenuEl = document.getElementById('main-menu');
+const leaderboardEl = document.getElementById('leaderboard');
 const instrBtn = document.getElementById('instr-btn');
 const instrOverlay = document.getElementById('instr-overlay');
 const closeInstr = document.getElementById('close-instr');
@@ -15,6 +16,14 @@ const highScoreEl = document.getElementById('high-score');
 if (highScoreEl) {
     highScoreEl.innerText = `HIGH SCORE: ${highScore}`;
 }
+
+function updateLeaderboard() {
+    const scores = JSON.parse(localStorage.getItem('voidRunnerLeaderboard') || '[]');
+    leaderboardEl.innerHTML = 'TOP RUNS<br>' + 
+        (scores.length ? scores.map((s, i) => `${i+1}. ${s}`).join('<br>') : 'NO DATA');
+}
+
+updateLeaderboard();
 
 class SoundManager {
     constructor() {
@@ -257,6 +266,13 @@ function gameLoop() {
                     highScore = score;
                     localStorage.setItem('voidRunnerHighScore', highScore);
                     highScoreEl.innerText = `HIGH SCORE: ${highScore}`;
+
+                    const scores = JSON.parse(localStorage.getItem('voidRunnerLeaderboard') || '[]');
+                    scores.push(score);
+                    scores.sort((a, b) => b - a);
+                    const top5 = scores.slice(0, 5);
+                    localStorage.setItem('voidRunnerLeaderboard', JSON.stringify(top5));
+                    updateLeaderboard();
                 }
                 msgEl.innerText = 'GAME OVER';
                 msgEl.style.display = 'block';
