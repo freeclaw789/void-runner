@@ -249,10 +249,12 @@ function checkCollision(p, o) {
 }
 
 function gameLoop() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    const sector = sectorConfig[Math.min(currentSector, sectorConfig.length - 1)];
+    ctx.fillStyle = `rgba(${sector.bg[0]}, ${sector.bg[1]}, ${sector.bg[2]}, 0.2)`;
     ctx.fillRect(0, 0, width, height);
 
     if (gameActive) {
+        currentSector = Math.floor(score / 50);
         player.update();
         player.draw();
 
