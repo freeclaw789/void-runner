@@ -181,7 +181,12 @@ class PowerUp {
 
 function spawnObstacle() {
     if (gameActive) {
-        obstacles.push(new Obstacle());
+        const isHoming = Math.random() < 0.15 && score > 20;
+        if (isHoming) {
+            obstacles.push(new HomingMissile());
+        } else {
+            obstacles.push(new Obstacle());
+        }
         setTimeout(spawnObstacle, Math.max(200, 1000 - score * 2));
     }
 }
@@ -305,6 +310,35 @@ window.addEventListener('mousedown', (e) => {
     if (!gameActive) {
         gameActive = true;
         sound.playStart();
+        score = 0;
+        speed = 5;
+        obstacles = [];
+        gems = [];
+        powerups = [];
+        scoreEl.innerText = score;
+        msgEl.style.display = 'none';
+        mainMenuEl.style.display = 'none';
+        uiEl.style.display = 'flex';
+        spawnObstacle();
+        spawnGem();
+        spawnPowerUp();
+    } else {
+        player.targetX = e.clientX;
+    }
+});
+
+window.addEventListener('mousemove', (e) => {
+    if (gameActive) {
+        player.targetX = e.clientX;
+    }
+});
+
+player = new Player();
+obstacles = [];
+gems = [];
+powerups = [];
+gameLoop();
+t();
         score = 0;
         speed = 5;
         obstacles = [];
