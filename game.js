@@ -161,6 +161,36 @@ class Obstacle {
     }
 }
 
+class HomingMissile extends Obstacle {
+    constructor() {
+        super();
+        this.r = 12;
+        this.color = '#f00';
+    }
+    update() {
+        this.y += speed * 1.2;
+        const dx = player.x - this.x;
+        this.x += Math.sign(dx) * (speed * 0.5);
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color;
+        ctx.fill();
+        ctx.closePath();
+        // Missile tip
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y + this.r);
+        ctx.lineTo(this.x - 5, this.y + this.r + 10);
+        ctx.lineTo(this.x + 5, this.y + this.r + 10);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+    }
+}
+
 class Gem {
     constructor() {
         this.r = 8;
