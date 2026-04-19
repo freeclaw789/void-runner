@@ -3,6 +3,9 @@ const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const msgEl = document.getElementById('msg');
 const mainMenuEl = document.getElementById('main-menu');
+const instrBtn = document.getElementById('instr-btn');
+const instrOverlay = document.getElementById('instr-overlay');
+const closeInstr = document.getElementById('close-instr');
 const uiEl = document.getElementById('ui');
 
 let width, height, player, obstacles, gems, powerups, score, gameActive = false, speed = 5;
