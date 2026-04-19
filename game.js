@@ -6,6 +6,51 @@ const mainMenuEl = document.getElementById('main-menu');
 const uiEl = document.getElementById('ui');
 
 let width, height, player, obstacles, score, gameActive = false, speed = 5;
+let highScore = localStorage.getItem('voidRunnerHighScore') || 0;
+const highScoreEl = document.getElementById('high-score');
+
+if (highScoreEl) {
+    highScoreEl.innerText = `HIGH SCORE: ${highScore}`;
+}
+
+class SoundManager {
+    constructor() {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    playStart() {
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        this.beep(200, 400, 0.1);
+    }
+
+    playScore() {
+        this.beep(800, 1000, 0.05);
+    }
+
+    playCollision() {
+        this.beep(300, 100, 0.3, 'sawtooth');
+    }
+
+    beep(startFreq, endFreq, duration, type = 'sine') {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(startFreq, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(endFreq, this.ctx.currentTime + duration);
+
+        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+    }
+}
+
+const sound = new SoundManager();
 
 function resize() {
     width = canvas.width = window.innerWidth;
@@ -82,6 +127,7 @@ function gameLoop() {
             o.draw();
             if (checkCollision(player, o)) {
                 gameActive = false;
+                sound.playCollision();
                 if (score > highScore) {
                     highScore = score;
                     localStorage.setItem('voidRunnerHighScore', highScore);
@@ -98,6 +144,7 @@ function gameLoop() {
             if (o.y > height + o.r) {
                 obstacles.splice(i, 1);
                 score++;
+                sound.playScore();
                 scoreEl.innerText = score;
                 speed += 0.01;
             }
@@ -134,6 +181,7 @@ window.addEventListener('touchmove', (e) => {
 window.addEventListener('mousedown', (e) => {
     if (!gameActive) {
         gameActive = true;
+        sound.playStart();
         score = 0;
         speed = 5;
         obstacles = [];

@@ -3,7 +3,7 @@
 - [x] Add particle effects when obstacles are passed or when player dies
 - [x] Add particle effects when obstacles are passed or when player dies
 - [x] Implement a 'Combo' system for near-misses
-- [ ] Add sound effects (SFX) for start, collision, and score
+- [x] Add sound effects (SFX) for start, collision, and score
 - [x] Create a main menu with a high-score display
 - [x] Implement 'Power-up' spawning (e.g., a shield)
 - [x] Add screen shake effect on game over
