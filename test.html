@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Void Runner Tests</title>
+    <style>body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }</style>
+</head>
+<body>
+    <h1>Void Runner Test Suite</h1>
+    <p>Check the browser console (F12) for detailed results.</p>
+    <div id="test-results">Running tests...</div>
+    
+    <!-- Load game dependencies -->
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="main-menu">
+            <div id="high-score"></div>
+            <div id="start-btn"></div>
+        </div>
+        <div id="ui">
+            <div id="score"></div>
+            <div id="msg"></div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+    <script src="tests.js"></script>
+</body>
+</html>

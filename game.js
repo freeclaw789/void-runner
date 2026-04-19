@@ -338,32 +338,3 @@ obstacles = [];
 gems = [];
 powerups = [];
 gameLoop();
-t();
-        score = 0;
-        speed = 5;
-        obstacles = [];
-        gems = [];
-        powerups = [];
-        scoreEl.innerText = score;
-        msgEl.style.display = 'none';
-        mainMenuEl.style.display = 'none';
-        uiEl.style.display = 'flex';
-        spawnObstacle();
-        spawnGem();
-        spawnPowerUp();
-    } else {
-        player.targetX = e.clientX;
-    }
-});
-
-window.addEventListener('mousemove', (e) => {
-    if (gameActive) {
-        player.targetX = e.clientX;
-    }
-});
-
-player = new Player();
-obstacles = [];
-gems = [];
-powerups = [];
-gameLoop();
