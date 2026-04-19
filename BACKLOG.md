@@ -14,7 +14,7 @@
 ## New Phase: Depth & Variety
 - [x] Implement 'Score Gems' (collectible bonus points)
 - [x] Add 'Slow-mo' power-up (time dilation effect)
-- [ ] Add 'Magnet' power-up (pulls gems toward player)
+- [x] Add 'Magnet' power-up (pulls gems toward player)
 - [ ] Implement 'Homing Missiles' (obstacles that track player x-position)
 - [ ] Create 'Sector Transitions' (change visuals/patterns every 50 points)
 - [ ] Add visual player trails (dynamic based on speed)

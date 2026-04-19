@@ -5,7 +5,7 @@ const msgEl = document.getElementById('msg');
 const mainMenuEl = document.getElementById('main-menu');
 const uiEl = document.getElementById('ui');
 
-let width, height, player, obstacles, score, gameActive = false, speed = 5;
+let width, height, player, obstacles, gems, powerups, score, gameActive = false, speed = 5;
 let highScore = localStorage.getItem('voidRunnerHighScore') || 0;
 const highScoreEl = document.getElementById('high-score');
 
@@ -25,6 +25,14 @@ class SoundManager {
 
     playScore() {
         this.beep(800, 1000, 0.05);
+    }
+
+    playGem() {
+        this.beep(1200, 1500, 0.05);
+    }
+
+    playPowerUp() {
+        this.beep(600, 1200, 0.2);
     }
 
     playCollision() {
@@ -66,18 +74,33 @@ class Player {
         this.y = height * 0.8;
         this.r = 15;
         this.targetX = this.x;
+        this.magnetActive = false;
+        this.magnetTimer = 0;
     }
     update() {
         this.x += (this.targetX - this.x) * 0.2;
+        if (this.magnetActive) {
+            this.magnetTimer--;
+            if (this.magnetTimer <= 0) this.magnetActive = false;
+        }
     }
     draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = '#0ff';
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = '#0ff';
+        ctx.fillStyle = this.magnetActive ? '#ff0' : '#0ff';
+        ctx.shadowBlur = this.magnetActive ? 25 : 15;
+        ctx.shadowColor = this.magnetActive ? '#ff0' : '#0ff';
         ctx.fill();
         ctx.closePath();
+
+        if (this.magnetActive) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r + 50, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 255, 0, 0.3)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.closePath();
+        }
     }
 }
 
@@ -101,10 +124,79 @@ class Obstacle {
     }
 }
 
+class Gem {
+    constructor() {
+        this.r = 8;
+        this.x = Math.random() * width;
+        this.y = -this.r;
+        this.value = 5;
+    }
+    update() {
+        if (player.magnetActive) {
+            const dx = player.x - this.x;
+            const dy = player.y - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) {
+                this.x += dx * 0.1;
+                this.y += dy * 0.1;
+            }
+        }
+        this.y += speed * 0.8;
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff0';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#ff0';
+        ctx.fill();
+        ctx.closePath();
+    }
+}
+
+class PowerUp {
+    constructor() {
+        this.r = 12;
+        this.x = Math.random() * width;
+        this.y = -this.r;
+        this.type = 'magnet';
+    }
+    update() {
+        this.y += speed * 0.9;
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f0';
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#0f0';
+        ctx.fill();
+        ctx.closePath();
+        ctx.fillStyle = '#000';
+        ctx.font = 'bold 10px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('M', this.x, this.y + 4);
+    }
+}
+
 function spawnObstacle() {
     if (gameActive) {
         obstacles.push(new Obstacle());
         setTimeout(spawnObstacle, Math.max(200, 1000 - score * 2));
+    }
+}
+
+function spawnGem() {
+    if (gameActive) {
+        gems.push(new Gem());
+        setTimeout(spawnGem, 2000 + Math.random() * 3000);
+    }
+}
+
+function spawnPowerUp() {
+    if (gameActive) {
+        powerups.push(new PowerUp());
+        setTimeout(spawnPowerUp, 10000 + Math.random() * 15000);
     }
 }
 
@@ -149,6 +241,33 @@ function gameLoop() {
                 speed += 0.01;
             }
         });
+
+        gems.forEach((g, i) => {
+            g.update();
+            g.draw();
+            if (checkCollision(player, g)) {
+                gems.splice(i, 1);
+                score += g.value;
+                sound.playGem();
+                scoreEl.innerText = score;
+            }
+            if (g.y > height + g.r) gems.splice(i, 1);
+        });
+
+        powerups.forEach((p, i) => {
+            p.update();
+            p.draw();
+            if (checkCollision(player, p)) {
+                powerups.splice(i, 1);
+                sound.playPowerUp();
+                if (p.type === 'magnet') {
+                    player.magnetActive = true;
+                    player.magnetTimer = 600; // ~10 seconds at 60fps
+                }
+            }
+            if (p.y > height + p.r) powerups.splice(i, 1);
+        });
+
     } else {
         player.draw();
     }
@@ -161,11 +280,15 @@ window.addEventListener('touchstart', (e) => {
         score = 0;
         speed = 5;
         obstacles = [];
+        gems = [];
+        powerups = [];
         scoreEl.innerText = score;
         msgEl.style.display = 'none';
         mainMenuEl.style.display = 'none';
         uiEl.style.display = 'flex';
         spawnObstacle();
+        spawnGem();
+        spawnPowerUp();
     } else {
         player.targetX = e.touches[0].clientX;
     }
@@ -185,11 +308,15 @@ window.addEventListener('mousedown', (e) => {
         score = 0;
         speed = 5;
         obstacles = [];
+        gems = [];
+        powerups = [];
         scoreEl.innerText = score;
         msgEl.style.display = 'none';
         mainMenuEl.style.display = 'none';
         uiEl.style.display = 'flex';
         spawnObstacle();
+        spawnGem();
+        spawnPowerUp();
     } else {
         player.targetX = e.clientX;
     }
@@ -203,4 +330,6 @@ window.addEventListener('mousemove', (e) => {
 
 player = new Player();
 obstacles = [];
+gems = [];
+powerups = [];
 gameLoop();
