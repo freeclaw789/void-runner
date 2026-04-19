@@ -26,11 +26,52 @@ canvas {
 #high-score {
     font-size: 1.2rem; margin-bottom: 2rem;
 }
-#start-btn {
+#start-btn, #instr-btn {
     font-size: 1.5rem; padding: 1rem 2rem; border: 2px solid #0ff;
+    cursor: pointer; transition: 0.3s; margin-bottom: 1rem;
+    text-align: center;
+}
+#start-btn:hover, #instr-btn:hover {
+    background: #0ff; color: #000;
+}
+#instr-btn {
+    font-size: 1.1rem; padding: 0.7rem 1.5rem; border-color: rgba(0,255,255,0.5);
+}
+#instr-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: none; flex-direction: column; justify-content: center; align-items: center;
+    background: rgba(0,0,0,0.95); color: #0ff; z-index: 20;
+    text-align: center;
+    padding: 20px; box-sizing: border-box;
+}
+#instr-overlay h2 {
+    font-size: 2rem; margin-bottom: 2rem; text-shadow: 0 0 10px #0ff;
+}
+.instr-list {
+    display: flex; flex-direction: column; gap: 15px; 
+    max-width: 400px; text-align: left; margin-bottom: 2rem;
+}
+.instr-item {
+    display: flex; align-items: center; font-size: 1.1rem;
+}
+.dot {
+    width: 15px; height: 15px; border-radius: 50%; margin-right: 15px;
+    flex-shrink: 0;
+}
+.cyan { background: #0ff; box-shadow: 0 0 8px #0ff; }
+.magenta { background: #f0f; box-shadow: 0 0 8px #f0f; }
+.yellow { background: #ff0; box-shadow: 0 0 8px #ff0; }
+.green { background: #0f0; box-shadow: 0 0 8px #0f0; }
+.yellow-glow { 
+    background: #ff0; 
+    box-shadow: 0 0 15px #ff0, 0 0 5px #fff; 
+    border: 2px solid #ff0;
+}
+#close-instr {
+    font-size: 1.2rem; padding: 0.8rem 2rem; border: 2px solid #0ff;
     cursor: pointer; transition: 0.3s;
 }
-#start-btn:hover {
+#close-instr:hover {
     background: #0ff; color: #000;
 }
 #score {

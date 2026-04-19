@@ -358,6 +358,14 @@ window.addEventListener('mousemove', (e) => {
     }
 });
 
+instrBtn.addEventListener('click', () => {
+    instrOverlay.style.display = 'flex';
+});
+
+closeInstr.addEventListener('click', () => {
+    instrOverlay.style.display = 'none';
+});
+
 player = new Player();
 obstacles = [];
 gems = [];
