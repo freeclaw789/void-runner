@@ -10,3 +10,15 @@
 - [x] Implement different obstacle types (e.g., wide beams, fast small shards)
 - [x] Add a background starfield/grid for a better sense of speed
 - [x] Optimize touch response for low-latency movement
+
+## New Phase: Depth & Variety
+- [ ] Implement 'Score Gems' (collectible bonus points)
+- [ ] Add 'Slow-mo' power-up (time dilation effect)
+- [ ] Add 'Magnet' power-up (pulls gems toward player)
+- [ ] Implement 'Homing Missiles' (obstacles that track player x-position)
+- [ ] Create 'Sector Transitions' (change visuals/patterns every 50 points)
+- [ ] Add visual player trails (dynamic based on speed)
+- [ ] Implement 'Rotating Walls' (wide obstacles with moving gaps)
+- [ ] Add a Local Top 5 Leaderboard (persistence via localStorage)
+- [ ] Implement dynamic parallax background that reacts to speed
+- [ ] Refine difficulty scaling (exponential speed/spawn rate curves)
