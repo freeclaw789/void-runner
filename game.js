@@ -124,6 +124,13 @@ window.addEventListener('touchstart', (e) => {
     }
 });
 
+window.addEventListener('touchmove', (e) => {
+    if (gameActive) {
+        player.targetX = e.touches[0].clientX;
+        e.preventDefault();
+    }
+}, { passive: false });
+
 window.addEventListener('mousedown', (e) => {
     if (!gameActive) {
         gameActive = true;
@@ -136,6 +143,12 @@ window.addEventListener('mousedown', (e) => {
         uiEl.style.display = 'flex';
         spawnObstacle();
     } else {
+        player.targetX = e.clientX;
+    }
+});
+
+window.addEventListener('mousemove', (e) => {
+    if (gameActive) {
         player.targetX = e.clientX;
     }
 });
