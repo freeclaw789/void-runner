@@ -12,7 +12,7 @@
 - [x] Optimize touch response for low-latency movement
 
 ## New Phase: Depth & Variety
-- [ ] Implement 'Score Gems' (collectible bonus points)
+- [x] Implement 'Score Gems' (collectible bonus points)
 - [ ] Add 'Slow-mo' power-up (time dilation effect)
 - [ ] Add 'Magnet' power-up (pulls gems toward player)
 - [ ] Implement 'Homing Missiles' (obstacles that track player x-position)
