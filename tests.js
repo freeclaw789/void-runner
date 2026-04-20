@@ -74,6 +74,18 @@ async function runTests() {
         assert(msgEl.innerText === 'GAME OVER', "Message should be 'GAME OVER' after collision");
         assert(msgEl.style.display === 'block', "Message should be visible after collision");
 
+        // --- Test 7: E2E Scoring tests (Simulate gem collection -> Verify score increase) ---
+        gameActive = true;
+        const initialScore = score;
+        const testGem = new Gem();
+        testGem.x = player.x;
+        testGem.y = player.y;
+        gems.push(testGem);
+        
+        await waitFrames(2);
+        assert(score > initialScore, "Score should increase after collecting a gem");
+        assert(!gems.includes(testGem), "Gem should be removed from the list after collection");
+
     } catch (e) {
         console.error("Unexpected error during tests:", e);
         failed++;
