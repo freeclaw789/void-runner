@@ -25,7 +25,7 @@
 ## Stability & Testing
 - [ ] Implement automated syntax validation in pre-commit hook
 - [x] Expand `tests.js` to include DOM integration tests (Verify buttons trigger state changes)
-- [ ] Create a 'Smoke Test' suite for the critical path (Menu -> Start -> Game Loop -> Game Over)
+- [x] Create a 'Smoke Test' suite for the critical path (Menu -> Start -> Game Loop -> Game Over)
 - [ ] Implement a headless browser test (e.g., Playwright/Puppeteer) to detect blank screens/rendering crashes
 - [ ] Add regression tests for the 'How to Play' and 'Start' button functionality
 - [ ] Implement E2E Input tests (Verify mouse/touch moves the player)
