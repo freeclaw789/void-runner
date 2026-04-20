@@ -28,7 +28,7 @@
 - [x] Create a 'Smoke Test' suite for the critical path (Menu -> Start -> Game Loop -> Game Over)
 - [ ] Implement a headless browser test (e.g., Playwright/Puppeteer) to detect blank screens/rendering crashes
 - [ ] Add regression tests for the 'How to Play' and 'Start' button functionality
-- [ ] Implement E2E Input tests (Verify mouse/touch moves the player)
+- [x] Implement E2E Input tests (Verify mouse/touch moves the player)
 - [ ] Implement E2E Collision tests (Simulate hit -> Verify Game Over)
 - [ ] Implement E2E Scoring tests (Simulate gem collection -> Verify score increase)
 - [ ] Implement Persistence tests (Verify localStorage high score save/load)

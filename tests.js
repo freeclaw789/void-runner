@@ -1,5 +1,5 @@
 async function runTests() {
-    console.log("🚀 Starting Void Runner Tests...");
+    console.log("🚀 Starting Void Runner Enhanced Test Suite...");
     let passed = 0;
     let failed = 0;
 
@@ -13,34 +13,52 @@ async function runTests() {
         }
     }
 
+    async function waitFrames(frames = 1) {
+        for (let i = 0; i < frames; i++) {
+            await new Promise(resolve => requestAnimationFrame(resolve));
+        }
+    }
+
     try {
-        // Test 1: Initial State
+        // --- Test 1: Initial State ---
         assert(gameActive === false, "Game should start in inactive state");
 
-        // Test 2: Start Mechanism
-        // Simulate mousedown
+        // --- Test 2: Start Mechanism ---
         window.dispatchEvent(new MouseEvent('mousedown'));
         assert(gameActive === true, "Game should be active after mousedown");
         assert(score === 0, "Score should be reset to 0 on start");
         assert(mainMenuEl.style.display === 'none', "Main menu should be hidden on start");
 
-        // Test 3: Movement
-        const initialX = player.x;
-        window.dispatchEvent(new MouseEvent('mousemove', { clientX: 100 }));
-        assert(player.targetX === 100, "Player targetX should update on mousemove");
-
-        // Test 4: Collision/Game Over
-        // Manually trigger a collision by simulating a collision check
-        // Since we can't easily simulate a frame, we test the logic that handles collision
-        // We'll simulate the collision results
-        gameActive = true;
-        // We simulate the collision handler by calling the logic found in gameLoop
-        // Since the logic is inline in gameLoop, we'll simulate the effect
-        gameActive = false;
-        msgEl.innerText = 'GAME OVER';
-        msgEl.style.display = 'block';
+        // --- Test 3: E2E Input Tests (Mouse) ---
+        const startX = player.x;
+        const targetX = 200;
+        window.dispatchEvent(new MouseEvent('mousemove', { clientX: targetX }));
+        assert(player.targetX === targetX, "Mousemove should update player.targetX");
         
-        assert(gameActive === false, "Game should be inactive after collision");
+        await waitFrames(10); // Let the interpolation happen
+        assert(player.x !== startX, "Player.x should move toward targetX after frames");
+        assert(Math.abs(player.x - targetX) < Math.abs(startX - targetX), "Player should be closer to targetX");
+
+        // --- Test 4: E2E Input Tests (Touch) ---
+        const touchTargetX = 400;
+        const touchEvent = new TouchEvent('touchmove', {
+            touches: [{ clientX: touchTargetX, clientY: 0 }],
+            bubbles: true,
+            cancelable: true
+        });
+        window.dispatchEvent(touchEvent);
+        assert(player.targetX === touchTargetX, "Touchmove should update player.targetX");
+
+        await waitFrames(10);
+        assert(player.x !== 200, "Player.x should move toward new touch targetX");
+        assert(Math.abs(player.x - touchTargetX) < Math.abs(200 - touchTargetX), "Player should be closer to touch targetX");
+
+        // --- Test 5: Collision Logic (Basic) ---
+        // Manually simulate a collision
+        gameActive = true;
+        const dummyObstacle = { x: player.x, y: player.y, r: 10 };
+        const isColliding = checkCollision(player, dummyObstacle);
+        assert(isColliding === true, "Collision check should return true when objects overlap");
 
     } catch (e) {
         console.error("Unexpected error during tests:", e);
@@ -51,7 +69,6 @@ async function runTests() {
     if (failed > 0) throw new Error("Tests failed");
 }
 
-// Run tests after the game script has loaded
 window.addEventListener('load', () => {
     runTests().catch(e => console.error(e));
 });
