@@ -329,27 +329,34 @@ function gameLoop() {
             o.draw();
             const collided = o.collidesWith ? o.collidesWith(player) : checkCollision(player, o);
             if (collided) {
-                gameActive = false;
-                sound.playCollision();
-                if (score > highScore) {
-                    highScore = score;
-                    localStorage.setItem('voidRunnerHighScore', highScore);
-                    highScoreEl.innerText = `HIGH SCORE: ${highScore}`;
+                if (player.shieldActive) {
+                    player.shieldActive = false;
+                    player.shieldTimer = 0;
+                    obstacles.splice(i, 1);
+                    sound.playPowerUp();
+                } else {
+                    gameActive = false;
+                    sound.playCollision();
+                    if (score > highScore) {
+                        highScore = score;
+                        localStorage.setItem('voidRunnerHighScore', highScore);
+                        highScoreEl.innerText = `HIGH SCORE: ${highScore}`;
 
-                    const scores = JSON.parse(localStorage.getItem('voidRunnerLeaderboard') || '[]');
-                    scores.push(score);
-                    scores.sort((a, b) => b - a);
-                    const top5 = scores.slice(0, 5);
-                    localStorage.setItem('voidRunnerLeaderboard', JSON.stringify(top5));
-                    updateLeaderboard();
+                        const scores = JSON.parse(localStorage.getItem('voidRunnerLeaderboard') || '[]');
+                        scores.push(score);
+                        scores.sort((a, b) => b - a);
+                        const top5 = scores.slice(0, 5);
+                        localStorage.setItem('voidRunnerLeaderboard', JSON.stringify(top5));
+                        updateLeaderboard();
+                    }
+                    msgEl.innerText = 'GAME OVER';
+                    msgEl.style.display = 'block';
+                    setTimeout(() => {
+                        mainMenuEl.style.display = 'flex';
+                        uiEl.style.display = 'none';
+                        msgEl.style.display = 'none';
+                    }, 1500);
                 }
-                msgEl.innerText = 'GAME OVER';
-                msgEl.style.display = 'block';
-                setTimeout(() => {
-                    mainMenuEl.style.display = 'flex';
-                    uiEl.style.display = 'none';
-                    msgEl.style.display = 'none';
-                }, 1500);
             }
             if (o.y > height + o.r) {
                 obstacles.splice(i, 1);
@@ -382,6 +389,9 @@ function gameLoop() {
                     if (p.type === 'magnet') {
                         player.magnetActive = true;
                         player.magnetTimer = 600; // ~10 seconds at 60fps
+                    } else if (p.type === 'shield') {
+                        player.shieldActive = true;
+                        player.shieldTimer = 600;
                     }
                 }
                 if (p.y > height + p.r) powerups.splice(i, 1);

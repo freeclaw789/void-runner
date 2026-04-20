@@ -116,8 +116,21 @@ async function runTests() {
         localStorage.setItem('voidRunnerLeaderboard', JSON.stringify(mockScores));
         const storedScores = JSON.parse(localStorage.getItem('voidRunnerLeaderboard'));
         assert(storedScores.length === 3 && storedScores[0] === 150, "Leaderboard should persist and retrieve scores correctly");
+        // --- Test 9: Shield Power-up Logic ---
+        gameActive = true;
+        player.shieldActive = true;
+        player.shieldTimer = 600;
+        const shieldObstacle = new Obstacle();
+        shieldObstacle.x = player.x;
+        shieldObstacle.y = player.y;
+        obstacles.push(shieldObstacle);
+        
+        await waitFrames(2);
+        assert(gameActive === true, "Game should remain active after collision with shield");
+        assert(player.shieldActive === false, "Shield should be consumed after collision");
+        assert(obstacles.length === 0, "Obstacle should be removed after shield collision");
+
         localStorage.clear();
-        console.error("Unexpected error during tests:", e);
         failed++;
     }
 
