@@ -29,6 +29,14 @@ async function runTests() {
         assert(score === 0, "Score should be reset to 0 on start");
         assert(mainMenuEl.style.display === 'none', "Main menu should be hidden on start");
 
+        // --- Test 2b: Instruction Overlay ---
+        gameActive = false; // Reset for UI tests
+        mainMenuEl.style.display = 'flex';
+        instrBtn.click();
+        assert(instrOverlay.style.display === 'flex', "Instruction overlay should show on instrBtn click");
+        closeInstr.click();
+        assert(instrOverlay.style.display === 'none', "Instruction overlay should hide on closeInstr click");
+
         // --- Test 3: E2E Input Tests (Mouse) ---
         const startX = player.x;
         const targetX = 200;
