@@ -20,5 +20,5 @@
 - [x] Add visual player trails (dynamic based on speed)
 - [x] Implement 'Rotating Walls' (wide obstacles with moving gaps)
 - [x] Add a Local Top 5 Leaderboard (persistence via localStorage)
-- [ ] Implement dynamic parallax background that reacts to speed
+- [x] Implement dynamic parallax background that reacts to speed
 - [ ] Refine difficulty scaling (exponential speed/spawn rate curves)

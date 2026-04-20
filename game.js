@@ -10,6 +10,14 @@ const closeInstr = document.getElementById('close-instr');
 const uiEl = document.getElementById('ui');
 
 let width, height, player, obstacles, gems, powerups, score, gameActive = false, speed = 5;
+let currentSector = 0;
+const sectorConfig = [
+    { bg: [10, 10, 30] },    // Deep Void
+    { bg: [30, 10, 30] },    // Neon Nebula
+    { bg: [10, 30, 30] },    // Cyber Grid
+    { bg: [40, 40, 10] },    // Data Stream
+    { bg: [20, 20, 20] }     // The Core
+];
 let highScore = localStorage.getItem('voidRunnerHighScore') || 0;
 const highScoreEl = document.getElementById('high-score');
 
@@ -282,6 +290,8 @@ function gameLoop() {
     const sector = sectorConfig[Math.min(currentSector, sectorConfig.length - 1)];
     ctx.fillStyle = `rgba(${sector.bg[0]}, ${sector.bg[1]}, ${sector.bg[2]}, 0.2)`;
     ctx.fillRect(0, 0, width, height);
+    background.update(speed);
+    background.draw(ctx, sector);
 
     if (gameActive) {
         currentSector = Math.floor(score / 50);
