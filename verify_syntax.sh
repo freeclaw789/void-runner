@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/data/data/com.termux/files/usr/bin/bash
 # Simple syntax check for game.js
 node -c game.js
 if [ $? -eq 0 ]; then
