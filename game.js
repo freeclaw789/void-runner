@@ -88,6 +88,32 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
+class Background {
+    constructor() {
+        this.stars = Array.from({ length: 100 }, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            s: Math.random() * 2
+        }));
+    }
+    update(speed) {
+        this.stars.forEach(s => {
+            s.y += speed * 0.5;
+            if (s.y > window.innerHeight) s.y = 0;
+        });
+    }
+    draw(ctx, sector) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        this.stars.forEach(s => {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.s, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    }
+}
+
+const background = new Background();
+
 class Player {
     constructor() {
         this.x = width / 2;

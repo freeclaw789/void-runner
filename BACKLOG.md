@@ -21,4 +21,18 @@
 - [x] Implement 'Rotating Walls' (wide obstacles with moving gaps)
 - [x] Add a Local Top 5 Leaderboard (persistence via localStorage)
 - [x] Implement dynamic parallax background that reacts to speed
-- [ ] Refine difficulty scaling (exponential speed/spawn rate curves)
+
+## Stability & Testing
+- [ ] Implement automated syntax validation in pre-commit hook
+- [ ] Expand `tests.js` to include DOM integration tests (Verify buttons trigger state changes)
+- [ ] Create a 'Smoke Test' suite for the critical path (Menu -> Start -> Game Loop -> Game Over)
+- [ ] Implement a headless browser test (e.g., Playwright/Puppeteer) to detect blank screens/rendering crashes
+- [ ] Add regression tests for the 'How to Play' and 'Start' button functionality
+- [ ] Implement E2E Input tests (Verify mouse/touch moves the player)
+- [ ] Implement E2E Collision tests (Simulate hit -> Verify Game Over)
+- [ ] Implement E2E Scoring tests (Simulate gem collection -> Verify score increase)
+- [ ] Implement Persistence tests (Verify localStorage high score save/load)
+- [ ] Establish "Test-First" protocol: All new features must include a `tests.js` update
+- [ ] Implement Error Boundary in Game Loop (Prevent single-object crashes from blanking the screen)
+- [ ] Create Health Check utility for critical game objects (Verify initialization of Player, Sound, Background)
+- [ ] Integrate `tests.js` into a CI-like check for every push
