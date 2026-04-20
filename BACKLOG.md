@@ -22,6 +22,15 @@
 - [x] Add a Local Top 5 Leaderboard (persistence via localStorage)
 - [x] Implement dynamic parallax background that reacts to speed
 
+## Gameplay Evolution
+- [ ] Implement 'Obstacle Waves' (structured patterns instead of random spawning)
+- [ ] Add 'Boss Encounters' (large obstacles with health/weak points every 250 points)
+- [ ] Implement 'Player Experience/Leveling' (gems increase level, improving magnet range)
+- [ ] Add 'Screen Shake' on near-misses for visceral feel
+- [ ] Create 'Unlockable Skins' (change player color/shape based on high score)
+- [x] Implement 'Dynamic Background' (background colors shift smoothly based on score)
+- [ ] Add 'Combo Multiplier' (collecting gems in quick succession multiplies points)
+
 ## Stability & Testing
 - [x] Implement automated syntax validation in pre-commit hook
 - [x] Expand `tests.js` to include DOM integration tests (Verify buttons trigger state changes)

@@ -313,8 +313,18 @@ function checkCollision(p, o) {
 }
 
 function gameLoop() {
-    const sector = sectorConfig[Math.min(currentSector, sectorConfig.length - 1)];
-    ctx.fillStyle = `rgba(${sector.bg[0]}, ${sector.bg[1]}, ${sector.bg[2]}, 0.2)`;
+    const sectorIdx = Math.min(currentSector, sectorConfig.length - 1);
+    const nextSectorIdx = Math.min(sectorIdx + 1, sectorConfig.length - 1);
+    const sector = sectorConfig[sectorIdx];
+    const nextSector = sectorConfig[nextSectorIdx];
+
+    // Smoothly interpolate background color based on progress to next sector
+    const progress = (score % 50) / 50;
+    const r = Math.round(sector.bg[0] + (nextSector.bg[0] - sector.bg[0]) * progress);
+    const g = Math.round(sector.bg[1] + (nextSector.bg[1] - sector.bg[1]) * progress);
+    const b = Math.round(sector.bg[2] + (nextSector.bg[2] - sector.bg[2]) * progress);
+
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.2)`;
     ctx.fillRect(0, 0, width, height);
     background.update(speed);
     background.draw(ctx, sector);
