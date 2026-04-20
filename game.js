@@ -196,9 +196,8 @@ class Obstacle {
 }
 
 class HomingMissile extends Obstacle {
-    constructor() {
-        super();
-        this.r = 12;
+    constructor(x = Math.random() * width, y = -20) {
+        super(x, y, 12);
         this.color = '#f00';
     }
     update() {
@@ -280,13 +279,68 @@ class PowerUp {
     }
 }
 
+class Wave {
+    static patterns = {
+        wall: (speed) => {
+            const gapX = Math.random() * width;
+            const gapSize = 100 + Math.random() * 50;
+            const obstacles = [];
+            for (let x = 0; x < width; x += 40) {
+                if (x < gapX - gapSize/2 || x > gapX + gapSize/2) {
+                    obstacles.push(new Obstacle(x, -20, 15));
+                }
+            }
+            return obstacles;
+        },
+        v_shape: (speed) => {
+            const centerX = Math.random() * width;
+            const obstacles = [];
+            for (let i = 0; i < 10; i++) {
+                const offset = i * 20;
+                obstacles.push(new Obstacle(centerX - offset, -20 - i*10, 12));
+                obstacles.push(new Obstacle(centerX + offset, -20 - i*10, 12));
+            }
+            return obstacles;
+        },
+        burst: (speed) => {
+            const obstacles = [];
+            for (let i = 0; i < 5; i++) {
+                obstacles.push(new Obstacle(Math.random() * width, -20 - Math.random() * 100, 15));
+            }
+            return obstacles;
+        },
+        tunnel: (speed) => {
+            const obstacles = [];
+            const gap = 150;
+            const centerX = Math.random() * (width - gap) + gap/2;
+            for (let y = 0; y < 400; y += 60) {
+                obstacles.push(new Obstacle(centerX - gap/2, -20 + y, 20));
+                obstacles.push(new Obstacle(centerX + gap/2, -20 + y, 20));
+            }
+            return obstacles;
+        }
+    };
+
+    static triggerRandomWave() {
+        const keys = Object.keys(this.patterns);
+        const pattern = keys[Math.floor(Math.random() * keys.length)];
+        return this.patterns[pattern](speed);
+    }
+}
+
 function spawnObstacle() {
     if (gameActive) {
-        const isHoming = Math.random() < 0.15 && score > 20;
-        if (isHoming) {
-            obstacles.push(new HomingMissile());
+        // 10% chance to trigger a structured wave instead of a single obstacle
+        if (Math.random() < 0.10 && score > 50) {
+            const waveObstacles = Wave.triggerRandomWave();
+            obstacles.push(...waveObstacles);
         } else {
-            obstacles.push(new Obstacle());
+            const isHoming = Math.random() < 0.15 && score > 20;
+            if (isHoming) {
+                obstacles.push(new HomingMissile());
+            } else {
+                obstacles.push(new Obstacle());
+            }
         }
         setTimeout(spawnObstacle, Math.max(200, 1000 - score * 2));
     }

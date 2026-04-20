@@ -23,7 +23,7 @@
 - [x] Implement dynamic parallax background that reacts to speed
 
 ## Gameplay Evolution
-- [ ] Implement 'Obstacle Waves' (structured patterns instead of random spawning)
+- [x] Implement 'Obstacle Waves' (structured patterns instead of random spawning)
 - [ ] Add 'Boss Encounters' (large obstacles with health/weak points every 250 points)
 - [ ] Implement 'Player Experience/Leveling' (gems increase level, improving magnet range)
 - [ ] Add 'Screen Shake' on near-misses for visceral feel
