@@ -291,7 +291,8 @@ function gameLoop() {
         obstacles.forEach((o, i) => {
             o.update();
             o.draw();
-            if (checkCollision(player, o)) {
+            const collided = o.collidesWith ? o.collidesWith(player) : checkCollision(player, o);
+            if (collided) {
                 gameActive = false;
                 sound.playCollision();
                 if (score > highScore) {

@@ -18,7 +18,7 @@
 - [x] Implement 'Homing Missiles' (obstacles that track player x-position)
 - [x] Create 'Sector Transitions' (change visuals/patterns every 50 points)
 - [x] Add visual player trails (dynamic based on speed)
-- [ ] Implement 'Rotating Walls' (wide obstacles with moving gaps)
+- [x] Implement 'Rotating Walls' (wide obstacles with moving gaps)
 - [x] Add a Local Top 5 Leaderboard (persistence via localStorage)
 - [ ] Implement dynamic parallax background that reacts to speed
 - [ ] Refine difficulty scaling (exponential speed/spawn rate curves)
