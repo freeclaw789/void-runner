@@ -29,7 +29,7 @@
 - [ ] Implement a headless browser test (e.g., Playwright/Puppeteer) to detect blank screens/rendering crashes
 - [ ] Add regression tests for the 'How to Play' and 'Start' button functionality
 - [x] Implement E2E Input tests (Verify mouse/touch moves the player)
-- [ ] Implement E2E Collision tests (Simulate hit -> Verify Game Over)
+- [x] Implement E2E Collision tests (Simulate hit -> Verify Game Over)
 - [ ] Implement E2E Scoring tests (Simulate gem collection -> Verify score increase)
 - [ ] Implement Persistence tests (Verify localStorage high score save/load)
 - [ ] Establish "Test-First" protocol: All new features must include a `tests.js` update

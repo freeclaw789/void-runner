@@ -60,6 +60,20 @@ async function runTests() {
         const isColliding = checkCollision(player, dummyObstacle);
         assert(isColliding === true, "Collision check should return true when objects overlap");
 
+        // --- Test 6: E2E Collision tests (Simulate hit -> Verify Game Over) ---
+        gameActive = true;
+        score = 0;
+        msgEl.style.display = 'none';
+        const collisionObstacle = new Obstacle();
+        collisionObstacle.x = player.x;
+        collisionObstacle.y = player.y;
+        obstacles.push(collisionObstacle);
+        
+        await waitFrames(2);
+        assert(gameActive === false, "Game should be inactive after collision");
+        assert(msgEl.innerText === 'GAME OVER', "Message should be 'GAME OVER' after collision");
+        assert(msgEl.style.display === 'block', "Message should be visible after collision");
+
     } catch (e) {
         console.error("Unexpected error during tests:", e);
         failed++;
