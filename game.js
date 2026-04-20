@@ -373,17 +373,21 @@ function gameLoop() {
         });
 
         powerups.forEach((p, i) => {
-            p.update();
-            p.draw();
-            if (checkCollision(player, p)) {
-                powerups.splice(i, 1);
-                sound.playPowerUp();
-                if (p.type === 'magnet') {
-                    player.magnetActive = true;
-                    player.magnetTimer = 600; // ~10 seconds at 60fps
+            try {
+                p.update();
+                p.draw();
+                if (checkCollision(player, p)) {
+                    powerups.splice(i, 1);
+                    sound.playPowerUp();
+                    if (p.type === 'magnet') {
+                        player.magnetActive = true;
+                        player.magnetTimer = 600; // ~10 seconds at 60fps
+                    }
                 }
+                if (p.y > height + p.r) powerups.splice(i, 1);
+            } catch (e) {
+                console.error(`Error updating powerup ${i}:`, e);
             }
-            if (p.y > height + p.r) powerups.splice(i, 1);
         });
 
     } else {

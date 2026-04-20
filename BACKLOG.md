@@ -33,6 +33,6 @@
 - [ ] Implement E2E Scoring tests (Simulate gem collection -> Verify score increase)
 - [ ] Implement Persistence tests (Verify localStorage high score save/load)
 - [ ] Establish "Test-First" protocol: All new features must include a `tests.js` update
-- [ ] Implement Error Boundary in Game Loop (Prevent single-object crashes from blanking the screen)
+- [x] Implement Error Boundary in Game Loop (Prevent single-object crashes from blanking the screen)
 - [ ] Create Health Check utility for critical game objects (Verify initialization of Player, Sound, Background)
 - [ ] Integrate `tests.js` into a CI-like check for every push
