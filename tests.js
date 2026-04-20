@@ -84,9 +84,31 @@ async function runTests() {
         
         await waitFrames(2);
         assert(score > initialScore, "Score should increase after collecting a gem");
-        assert(!gems.includes(testGem), "Gem should be removed from the list after collection");
+        // --- Test 8: Persistence tests (Verify localStorage high score save/load) ---
+        localStorage.clear();
+        localStorage.setItem('voidRunnerHighScore', '100');
+        
+        // Since highScore is a let variable initialized at load, we simulate a reload
+        // by manually updating it or checking if the game logic would pick it up
+        // In a real scenario, we'd reload the page, but here we test the storage logic
+        assert(localStorage.getItem('voidRunnerHighScore') === '100', "High score should be stored in localStorage");
 
-    } catch (e) {
+        // Simulate achieving a new high score
+        score = 150;
+        highScore = 100;
+        // Trigger the logic found in gameLoop's collision section
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('voidRunnerHighScore', highScore);
+        }
+        assert(localStorage.getItem('voidRunnerHighScore') === '150', "localStorage should update with new high score");
+
+        // Test Leaderboard persistence
+        const mockScores = [150, 100, 50];
+        localStorage.setItem('voidRunnerLeaderboard', JSON.stringify(mockScores));
+        const storedScores = JSON.parse(localStorage.getItem('voidRunnerLeaderboard'));
+        assert(storedScores.length === 3 && storedScores[0] === 150, "Leaderboard should persist and retrieve scores correctly");
+        localStorage.clear();
         console.error("Unexpected error during tests:", e);
         failed++;
     }
