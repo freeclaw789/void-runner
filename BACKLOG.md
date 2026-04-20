@@ -26,7 +26,7 @@
 - [x] Implement 'Obstacle Waves' (structured patterns instead of random spawning)
 - [ ] Add 'Boss Encounters' (large obstacles with health/weak points every 250 points)
 - [ ] Implement 'Player Experience/Leveling' (gems increase level, improving magnet range)
-- [ ] Add 'Screen Shake' on near-misses for visceral feel
+- [x] Add 'Screen Shake' on near-misses for visceral feel
 - [ ] Create 'Unlockable Skins' (change player color/shape based on high score)
 - [x] Implement 'Dynamic Background' (background colors shift smoothly based on score)
 - [ ] Add 'Combo Multiplier' (collecting gems in quick succession multiplies points)

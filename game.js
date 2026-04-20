@@ -467,6 +467,7 @@ function gameLoop() {
     } else {
         player.draw();
     }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     requestAnimationFrame(gameLoop);
 }
 
