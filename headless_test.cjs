@@ -6,6 +6,7 @@ const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
 const gameJs = fs.readFileSync(path.join(__dirname, 'game.js'), 'utf8');
 
 const dom = new JSDOM(html, {
+    url: "http://localhost",
     runScripts: "dangerously",
     resources: "usable"
 });
@@ -49,7 +50,6 @@ const localStorageMock = (() => {
 })();
 window.localStorage = localStorageMock;
 
-
 // Mock AudioContext
 window.AudioContext = class {
     constructor() { this.state = 'running'; }
@@ -69,13 +69,12 @@ window.innerHeight = 600;
 const originalAddEventListener = window.addEventListener;
 window.addEventListener = function(type, listener, options) {
     if (options && options.passive === false) {
-        // Just ignore passive: false in jsdom
         return originalAddEventListener.call(this, type, listener);
     }
     return originalAddEventListener.call(this, type, listener, options);
 };
 
-// Make DOM globals available for eval
+// Make DOM globals available for the test process
 global.window = window;
 global.document = document;
 global.localStorage = localStorageMock;
@@ -83,15 +82,23 @@ global.AudioContext = window.AudioContext;
 global.webkitAudioContext = window.webkitAudioContext;
 global.requestAnimationFrame = window.requestAnimationFrame;
 
-// Execute game.js via script tag to ensure top-level 'var' declarations
-// become properties of the window object (simulating browser behavior).
+// Execute game.js in the window context
 try {
-    const script = document.createElement('script');
-    script.textContent = gameJs;
-    document.body.appendChild(script);
-    console.log("✅ game.js injected via script tag");
+    // We wrap the gameJs to ensure it's executed in the window context
+    // and capture any errors
+    const wrappedJs = `
+        try {
+            ${gameJs}
+            console.log("INTERNAL_GAME_LOADED");
+        } catch (e) {
+            console.error("INTERNAL_GAME_ERROR:", e);
+            throw e;
+        }
+    `;
+    window.eval(wrappedJs);
+    console.log("✅ game.js eval successful");
 } catch (e) {
-    console.error("❌ Error injecting game.js:", e);
+    console.error("❌ Error during game.js eval:", e);
     process.exit(1);
 }
 
@@ -99,6 +106,9 @@ async function test() {
     console.log("🚀 Running Headless Stability Test...");
     
     try {
+        // Wait a bit for any async initialization
+        await new Promise(r => setTimeout(r, 100));
+
         if (!window.player) throw new Error("Player not initialized");
         console.log("✅ Player initialized");
 
