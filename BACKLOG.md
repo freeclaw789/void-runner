@@ -78,9 +78,21 @@
 - [x] Add "Bloom" post-processing effect for neon visuals
 - [x] Create sector-specific music variations (tempo/pitch shifts)
 - [x] Add high-score celebration animation
-- [ ] Add a "Mute" toggle to the Pause menu
-- [ ] Implement a "Slow-motion" zone or power-up
-- [ ] Improve the Game Over sequence with slow-motion and screen fade
+- [x] Add a "Mute" toggle to the Pause menu
+- [x] Implement a "Slow-motion" zone or power-up
+- [x] Improve the Game Over sequence with slow-motion and screen fade
+
+## Phase: Infinite Void
+- [x] Implement "Pulsing Obstacles" (obstacles that oscillate in size)
+- [x] Add "Chromatic Aberration" effect that intensifies at higher speeds
+- [x] Implement a "Zen Mode" (infinite survival without death, just for relaxation)
+- [x] Create a "Gem Upgrade Shop" (use total gems to increase starting shield duration or magnet range)
+- [x] Add "Gamepad Support" using the Gamepad API for better accessibility
+- [x] Implement "Dynamic Camera Zoom" (camera pulls back slightly as speed increases)
+- [x] Add "Advanced Audio Settings" (separate sliders for Music, SFX, and Master volume)
+- [x] Create "Shareable Score Cards" (generate a text/image summary of the run to copy to clipboard)
+- [ ] Implement "Sector-Specific Background Music" (each sector has its own unique loop)
+- [ ] Add "Performance Profiler" (internal tool to monitor FPS and memory leaks during extended sessions)
 
 **Backlog Maintenance Rule:**
 If the backlog ever empties, the next backlog item is to generate 10 more items for the backlog. This can include new game features, polish for existing features, other game improvements, performance improvements, stability improvements, or tests and ops improvements. Or anything else to push the game forward.

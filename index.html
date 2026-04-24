@@ -8,13 +8,71 @@
 </head>
 <body>
     <div id="game-container">
+        <div id="toast-container"></div>
+        <div id="fade-overlay"></div>
         <canvas id="gameCanvas"></canvas>
         <div id="main-menu">
             <h1>VOID RUNNER</h1>
             <div id="high-score">HIGH SCORE: 0</div>
             <div id="leaderboard"></div>
+            <div id="color-select">
+                <div class="color-option selected" data-color="#0ff" style="background: #0ff"></div>
+                <div class="color-option" data-color="#0f0" style="background: #0f0"></div>
+                <div class="color-option" data-color="#ff0" style="background: #ff0"></div>
+                <div class="color-option" data-color="#f0f" style="background: #f0f"></div>
+                <div class="color-option" data-color="#fff" style="background: #fff"></div>
+            </div>
             <div id="start-btn">TAP TO START</div>
+            <div id="daily-btn" style="font-size: 0.9rem; padding: 0.5rem 1rem; border: 1px solid #0ff; cursor: pointer; margin-bottom: 0.5rem; text-align: center; color: #0ff; border-color: #0ff;">DAILY CHALLENGE</div>
+            <div id="share-btn" style="font-size: 0.9rem; padding: 0.5rem 1rem; border: 1px solid #0f0; cursor: pointer; margin-bottom: 0.5rem; text-align: center; color: #0f0; border-color: #0f0; display: none;">SHARE LAST RUN</div>
+            <div id="shop-btn" style="font-size: 0.9rem; padding: 0.5rem 1rem; border: 1px solid #ff0; cursor: pointer; margin-bottom: 0.5rem; text-align: center; color: #ff0; border-color: #ff0;">GEM SHOP</div>
+            <div id="stress-btn" style="font-size: 0.9rem; padding: 0.5rem 1rem; border: 1px solid #f0f; cursor: pointer; margin-bottom: 1rem; text-align: center; color: #f0f; border-color: #f0f;">STRESS TEST: OFF</div>
             <div id="instr-btn">HOW TO PLAY</div>
+            <div id="settings-btn">SETTINGS</div>
+        </div>
+        <div id="settings-menu">
+            <h2>SETTINGS</h2>
+            <div class="setting-item">
+                <span>MASTER VOLUME</span>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
+            </div>
+            <div class="setting-item">
+                <span>MUSIC VOLUME</span>
+                <input type="range" id="music-volume-slider" min="0" max="1" step="0.1" value="0.5">
+            </div>
+            <div class="setting-item">
+                <span>SFX VOLUME</span>
+                <input type="range" id="sfx-volume-slider" min="0" max="1" step="0.1" value="0.5">
+            </div>
+            <div class="setting-item">
+                <span>SAFE MODE</span>
+                <input type="checkbox" id="safemode-toggle">
+            </div>
+            <div class="setting-item">
+                <span>ZEN MODE</span>
+                <input type="checkbox" id="zenmode-toggle">
+            </div>
+            <div id="close-settings">CLOSE</div>
+        </div>
+
+        <div id="shop-menu" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); border: 2px solid #ff0; padding: 2rem; color: #ff0; font-family: 'Courier New', Courier, monospace; text-align: center; z-index: 10; min-width: 300px; box-shadow: 0 0 20px #ff0;">
+            <h2>GEM SHOP</h2>
+            <div id="total-gems-display" style="font-size: 1.2rem; margin-bottom: 1rem;">GEMS: 0</div>
+            <div class="shop-item" style="margin-bottom: 1rem; border: 1px solid #ff0; padding: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>Shield Duration (Lvl <span id="shield-lvl">1</span>)</span>
+                <div id="buy-shield" style="cursor: pointer; background: #ff0; color: #000; padding: 2px 8px; font-weight: bold;">BUY: 50</div>
+            </div>
+            <div class="shop-item" style="margin-bottom: 1rem; border: 1px solid #ff0; padding: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>Magnet Range (Lvl <span id="magnet-lvl">1</span>)</span>
+                <div id="buy-magnet" style="cursor: pointer; background: #ff0; color: #000; padding: 2px 8px; font-weight: bold;">BUY: 50</div>
+            </div>
+            <div id="close-shop" style="margin-top: 1rem; cursor: pointer; text-decoration: underline;">BACK TO VOID</div>
+        </div>
+        <div id="pause-menu">
+            <h1>PAUSED</h1>
+            <div id="resume-btn">RESUME</div>
+            <div id="mute-btn">SOUND: ON</div>
+            <div id="restart-btn">RESTART</div>
         </div>
         <div id="instr-overlay">
             <h2>VOID PROTOCOL</h2>
@@ -43,10 +101,16 @@
             <div id="close-instr">CLOSE</div>
         </div>
         <div id="ui">
+            <div id="pause-btn" style="position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.5rem; color: #0ff; text-shadow: 0 0 10px #0ff; z-index: 5;">||</div>
             <div id="score">0</div>
+            <div id="level">LVL 1</div>
+            <div id="combo"></div>
             <div id="msg"></div>
         </div>
     </div>
+    <script src="achievements.js"></script>
+    <script src="hazards.js"></script>
+    <script src="shop.js"></script>
     <script src="game.js"></script>
 </body>
 </html>
