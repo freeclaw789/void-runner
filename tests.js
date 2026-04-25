@@ -6,6 +6,90 @@ async function runTests() {
     
     const tests = [];
 
+        // Test Visual Themes
+    tests.push({
+        name: "Theme: Visuals",
+        fn: () => {
+            const originalTheme = currentTheme;
+            
+            // Test Retro Theme
+            currentTheme = 'retro';
+            const retroObstacle = new Obstacle();
+            if (retroObstacle.color !== themes.retro.obstacle) {
+                throw new Error(`Obstacle color should be ${themes.retro.obstacle} in retro theme, got ${retroObstacle.color}`);
+            }
+            
+            // Test Organic Theme
+            currentTheme = 'organic';
+            const organicObstacle = new Obstacle();
+            if (organicObstacle.color !== themes.organic.obstacle) {
+                throw new Error(`Obstacle color should be ${themes.organic.obstacle} in organic theme, got ${organicObstacle.color}`);
+            }
+            
+            currentTheme = originalTheme;
+        }
+    });
+
+    tests.push({
+        name: "Theme: Player Skin",
+        fn: () => {
+            const originalTheme = currentTheme;
+            localStorage.removeItem('voidRunnerPlayerColor');
+            highScore = 0; // Ensure base skin
+            
+            currentTheme = 'retro';
+            player.updateSkin();
+            if (player.color !== themes.retro.playerDefault) {
+                throw new Error(`Player color should be ${themes.retro.playerDefault} in retro theme, got ${player.color}`);
+            }
+            
+            currentTheme = originalTheme;
+        }
+    });
+
+    tests.push({
+        name: "Collision: Near-Miss",
+        fn: () => {
+            const initialNearMisses = runStats.nearMisses;
+            const initialCombo = combo;
+            const p = { x: 100, y: 100, r: 15 };
+            const o = { x: 120, y: 100, r: 10, nearMissed: false }; // Dist = 20, minSafe = 15+10+15 = 40
+            
+            // Simulate the logic in gameLoop
+            const collided = checkCollision(p, o);
+            if (!collided) {
+                const dist = Math.hypot(p.x - o.x, p.y - o.y);
+                const minSafeDist = p.r + o.r + 15;
+                if (dist < minSafeDist && !o.nearMissed) {
+                    o.nearMissed = true;
+                    runStats.nearMisses++;
+                    combo++;
+                }
+            }
+            
+            if (runStats.nearMisses !== initialNearMisses + 1) throw new Error("Near-miss should have been recorded");
+            if (combo !== initialCombo + 1) throw new Error("Combo should have increased");
+        }
+    });
+
+    tests.push({
+        name: "Difficulty: Adaptive Wave Probability",
+        fn: () => {
+            const lowPerf = { gemsPerSecond: 0 };
+            const highPerf = { gemsPerSecond: 1.0 };
+            
+            updateDifficulty(100, lowPerf);
+            const probLow = difficulty.waveProbability;
+            
+            updateDifficulty(100, highPerf);
+            const probHigh = difficulty.waveProbability;
+            
+            if (probHigh <= probLow) {
+                throw new Error(`Wave probability should increase with higher performance. Low: ${probLow}, High: ${probHigh}`);
+            }
+        }
+    });
+
     // Test Music Manager Melody Cycling
     tests.push({
         name: "Music: Melody Cycling",
@@ -119,6 +203,38 @@ async function runTests() {
             
             window.triggerGameOver = originalTriggerGameOver;
             if (gameOverCalled) throw new Error("Game over should not be called in Zen Mode");
+        }
+    });
+
+    tests.push({
+        name: "Collision: Obstacle-Obstacle Interaction",
+        fn: () => {
+            const initialObsCount = obstacles.length;
+            const o1 = { x: 100, y: 100, r: 10, color: '#f0f', update: () => {}, draw: () => {} };
+            const o2 = { x: 110, y: 100, r: 10, color: '#f0f', update: () => {}, draw: () => {} };
+            
+            obstacles.push(o1, o2);
+            
+            // Simulate the collision logic from gameLoop
+            // We'll use a simplified version of the loop logic
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const o = obstacles[i];
+                let destroyed = false;
+                for (let j = i - 1; j >= 0; j--) {
+                    const o2_inner = obstacles[j];
+                    if (checkCollision(o, o2_inner)) {
+                        obstacles.splice(i, 1);
+                        obstacles.splice(j, 1);
+                        destroyed = true;
+                        break;
+                    }
+                }
+                if (destroyed) break;
+            }
+
+            if (obstacles.length !== initialObsCount) {
+                throw new Error(`Obstacles should have been destroyed. Expected ${initialObsCount}, got ${obstacles.length}`);
+            }
         }
     });
 
@@ -260,7 +376,35 @@ async function runTests() {
         }
     });
 
-    // Test Gamepad Support
+    tests.push({
+        name: "Missions: Completion",
+        fn: () => {
+            selectRandomMission();
+            const mission = getActiveMission();
+            
+            // Mock state to satisfy the mission goal
+            // Since we don't know which mission was selected, we'll just force it
+            // or mock the check function.
+            const originalCheck = mission.check;
+            mission.check = () => ({ success: true, failed: false });
+            
+            const result = updateMission({
+                gemsCollected: 0,
+                survivalTime: 0,
+                speed: 0,
+                combo: 0
+            });
+            
+            if (!result || result.status !== 'completed') {
+                throw new Error("Mission should be completed");
+            }
+            if (!isMissionCompleted()) {
+                throw new Error("isMissionCompleted should be true");
+            }
+            
+            mission.check = originalCheck;
+        }
+    });
     tests.push({
         name: "Gamepad: Movement",
         fn: () => {

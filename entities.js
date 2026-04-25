@@ -150,6 +150,12 @@ function shatterPlayer(x, y, color) {
     }
 }
 
+function explodeObstacle(o) {
+    for (let i = 0; i < 10; i++) {
+        emitParticle(o.x, o.y, o.color, (random() - 0.5) * 5, (random() - 0.5) * 5, 0.5, 0.02);
+    }
+}
+
 function updateParticles(ctx, delta = 1) {
     if (typeof safeMode !== 'undefined' && safeMode) return;
     

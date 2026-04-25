@@ -1,6 +1,7 @@
 const scoreEl = document.getElementById('score');
 const comboEl = document.getElementById('combo');
 const levelEl = document.getElementById('level');
+const missionEl = document.getElementById('mission');
 const msgEl = document.getElementById('msg');
 const mainMenuEl = document.getElementById('main-menu');
 const leaderboardEl = document.getElementById('leaderboard');
@@ -25,6 +26,7 @@ const sfxVolumeSlider = document.getElementById('sfx-volume-slider');
 const safeModeToggle = document.getElementById('safemode-toggle');
 const zenModeToggle = document.getElementById('zenmode-toggle');
 const profilerToggle = document.getElementById('profiler-toggle');
+const themeSelect = document.getElementById('theme-select');
 
 function shareScore() {
     const text = `🚀 VOID RUNNER\nScore: ${score}\nLevel: ${level}\nGems: ${gemsCollected}\nSector: ${currentSector + 1}/5\n\nCan you beat my run? #VoidRunner`;
@@ -113,6 +115,22 @@ closeSettings.addEventListener('click', () => {
     settingsMenu.style.display = 'none';
 });
 
+themeSelect.addEventListener('change', (e) => {
+    const theme = e.target.value;
+    currentTheme = theme;
+    localStorage.setItem('voidRunnerTheme', theme);
+    if (player) player.updateSkin();
+    // Refresh all active obstacles
+    obstacles.forEach(o => {
+        o.color = themes[theme].obstacle;
+        if (o instanceof HomingMissile) o.color = themes[theme].homing;
+        if (o instanceof PortalObstacle) o.color = themes[theme].portal;
+        if (o instanceof SineWaveObstacle) o.color = themes[theme].sine;
+        if (o instanceof PulsingObstacle) o.color = themes[theme].pulsing;
+        if (o instanceof Boss) o.color = themes[theme].boss;
+    });
+});
+
 volumeSlider.addEventListener('input', (e) => {
     const vol = parseFloat(e.target.value);
     sound.setMasterVolume(vol);
@@ -159,6 +177,13 @@ colorOptions.forEach(opt => {
 
 // Load settings
 function loadUISettings() {
+    const savedTheme = localStorage.getItem('voidRunnerTheme');
+    if (savedTheme !== null) {
+        currentTheme = savedTheme;
+        themeSelect.value = savedTheme;
+    } else {
+        themeSelect.value = 'neon';
+    }
     const savedVol = localStorage.getItem('voidRunnerVolume');
     if (savedVol !== null) {
         const vol = parseFloat(savedVol);

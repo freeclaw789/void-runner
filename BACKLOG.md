@@ -103,15 +103,15 @@
 
 ## Phase: Eternal Void
 - [x] Implement "Daily Seeded Runs" (everyone plays the same obstacle pattern for a day)
-- [ ] Add "Adaptive Difficulty" (AI that adjusts obstacle density based on player skill in real-time)
-- [ ] Implement "Challenge Missions" (e.g., "Survive 30 seconds without collecting gems")
-- [ ] Add "Visual Themes" (switch between Neon, Retro-Wireframe, and Organic styles)
-- [ ] Implement "Advanced Player Movement" (e.g., a 'phase' ability to pass through one obstacle)
-- [ ] Add "Dynamic Obstacle Interaction" (obstacles that collide and explode)
+- [x] Add "Adaptive Difficulty" (AI that adjusts obstacle density based on player skill in real-time)
+- [x] Implement "Challenge Missions" (e.g., "Survive 30 seconds without collecting gems")
+- [x] Add "Visual Themes" (switch between Neon, Retro-Wireframe, and Organic styles)
+- [x] Implement "Advanced Player Movement" (e.g., a 'phase' ability to pass through one obstacle)
+- [x] Add "Dynamic Obstacle Interaction" (obstacles that collide and explode)
 - [ ] Implement "Replay System" (record a run and play it back)
 - [ ] Add "Tutorial Levels" (short, guided segments to teach mechanics)
 - [ ] Implement "Global Leaderboard" (Mock API integration for worldwide rankings)
-- [ ] Add "End-of-Run Statistics" (Detailed breakdown: distance, gems collected, near-misses, etc.)
+- [x] Add "End-of-Run Statistics" (Detailed breakdown: distance, gems collected, near-misses, etc.)
 
 **Backlog Maintenance Rule:**
 If the backlog ever empties, the next backlog item is to generate 10 more items for the backlog. This can include new game features, polish for existing features, other game improvements, performance improvements, stability improvements, or tests and ops improvements. Or anything else to push the game forward.

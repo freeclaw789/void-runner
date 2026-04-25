@@ -8,6 +8,7 @@ let speed = 5;
 let zoom = 1.0;
 let level = 1;
 let gemsCollected = 0;
+let survivalTime = 0;
 let gemsInWindow = 0;
 let lastDifficultyUpdate = 0;
 let currentSector = 0;
@@ -31,8 +32,47 @@ let voidStormActive = false, voidStormTimer = 0, voidStormWarningTimer = 0, void
 // System/Settings
 let safeMode = false;
 let zenMode = false;
-let profilerActive = false;
-let stressMode = false;
+let currentTheme = localStorage.getItem('voidRunnerTheme') || 'neon';
+
+const themes = {
+    neon: {
+        playerDefault: '#0ff',
+        obstacle: '#f0f',
+        homing: '#f00',
+        portal: '#00f',
+        sine: '#0f0',
+        pulsing: '#ff0',
+        boss: '#f0f',
+        bgMultiplier: 1.0,
+        lineWidth: 2,
+        glow: true
+    },
+    retro: {
+        playerDefault: '#0f0',
+        obstacle: '#0f0',
+        homing: '#0f0',
+        portal: '#0f0',
+        sine: '#0f0',
+        pulsing: '#0f0',
+        boss: '#0f0',
+        bgMultiplier: 0.3,
+        lineWidth: 1,
+        glow: false
+    },
+    organic: {
+        playerDefault: '#aaffff',
+        obstacle: '#ffaaee',
+        homing: '#ffccaa',
+        portal: '#aaeeff',
+        sine: '#ccffaa',
+        pulsing: '#ffffaa',
+        boss: '#ff88ee',
+        bgMultiplier: 0.7,
+        lineWidth: 3,
+        glow: true
+    }
+};
+
 let bgPulse = 0;
 let lastClickTime = 0;
 let lastTime = 0;

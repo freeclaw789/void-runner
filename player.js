@@ -22,21 +22,24 @@ class Player {
         if (localStorage.getItem('voidRunnerPlayerColor')) {
             this.color = localStorage.getItem('voidRunnerPlayerColor');
             this.glow = this.color;
-        } else if (highScore < 100) {
-            this.color = '#0ff'; // Cyan
-            this.glow = '#0ff';
-        } else if (highScore < 500) {
-            this.color = '#0f0'; // Green
-            this.glow = '#0f0';
-        } else if (highScore < 1000) {
-            this.color = '#ff0'; // Yellow
-            this.glow = '#ff0';
-        } else if (highScore < 5000) {
-            this.color = '#f0f'; // Magenta
-            this.glow = '#f0f';
         } else {
-            this.color = '#fff'; // White
-            this.glow = '#fff';
+            const theme = themes[currentTheme];
+            if (highScore < 100) {
+                this.color = theme.playerDefault;
+                this.glow = theme.playerDefault;
+            } else if (highScore < 500) {
+                this.color = '#0f0'; // Green
+                this.glow = '#0f0';
+            } else if (highScore < 1000) {
+                this.color = '#ff0'; // Yellow
+                this.glow = '#ff0';
+            } else if (highScore < 5000) {
+                this.color = '#f0f'; // Magenta
+                this.glow = '#f0f';
+            } else {
+                this.color = '#fff'; // White
+                this.glow = '#fff';
+            }
         }
     }
 
@@ -61,6 +64,24 @@ class Player {
                 dashDiff -= Math.sign(dashDiff) * width;
             }
             this.x += dashDiff * (0.8 * delta);
+        }
+
+        if (this.phaseActive) {
+            this.phaseTimer -= delta;
+            if (this.phaseTimer <= 0) this.phaseActive = false;
+        }
+
+        if (this.phaseCooldown > 0) {
+            this.phaseCooldown -= delta;
+        }
+
+        if (this.phaseActive) {
+            this.phaseTimer -= delta;
+            if (this.phaseTimer <= 0) this.phaseActive = false;
+        }
+
+        if (this.phaseCooldown > 0) {
+            this.phaseCooldown -= delta;
         }
 
         if (this.wrapActive) {

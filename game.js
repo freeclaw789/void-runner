@@ -57,7 +57,15 @@ function triggerGameOver() {
         updateLeaderboard();
     }
 
-    msgEl.innerText = 'GAME OVER';
+    const statsHtml = `
+        <div style="text-align:center; margin-bottom: 1rem; font-family:monospace; line-height:1.6;">
+            <div>DISTANCE: ${Math.floor(runStats.distance)}m</div>
+            <div>GEMS: ${runStats.gems}</div>
+            <div>NEAR-MISSES: ${runStats.nearMisses}</div>
+            <div>POWERUPS: ${runStats.powerups}</div>
+        </div>
+    `;
+    msgEl.innerHTML = 'GAME OVER<br>' + statsHtml;
     msgEl.style.display = 'block';
     document.getElementById('share-btn').style.display = 'block';
 
@@ -81,6 +89,7 @@ function gameLoop(timestamp) {
     if (!lastTime) lastTime = timestamp;
     const dt = timestamp - lastTime;
     lastTime = timestamp;
+    survivalTime += dt / 1000;
     const delta = dt / (1000 / 60);
     handleGamepadInput();
     const timeScale = (player.slowmoActive || player.inSlowMoZone) ? 0.5 : 1.0;
@@ -189,6 +198,23 @@ function gameLoop(timestamp) {
             lastDifficultyUpdate = now;
         }
 
+        const missionResult = updateMission({
+            gemsCollected,
+            survivalTime,
+            speed,
+            combo
+        });
+        if (missionResult) {
+            if (missionResult.status === 'completed') {
+                showToast('MISSION COMPLETE', `${missionResult.mission.name}: ${missionResult.mission.description}`);
+                score += 100;
+                scoreEl.innerText = score;
+                sound.playPowerUp();
+            } else {
+                showToast('MISSION FAILED', `${missionResult.mission?.name || 'Mission'} failed`);
+            }
+        }
+
         let inZone = false;
         for (const zone of slowMoZones) {
             if (zone.contains(player)) inZone = true;
@@ -232,6 +258,22 @@ function gameLoop(timestamp) {
             const o = obstacles[i];
             o.update(effectiveDelta);
             o.draw();
+
+            // Obstacle-Obstacle collision
+            let destroyed = false;
+            for (let j = i - 1; j >= 0; j--) {
+                const o2 = obstacles[j];
+                if (checkCollision(o, o2)) {
+                    explodeObstacle(o);
+                    explodeObstacle(o2);
+                    obstacles.splice(i, 1);
+                    obstacles.splice(j, 1);
+                    destroyed = true;
+                    break;
+                }
+            }
+            if (destroyed) continue;
+
             const collided = o.collidesWith ? o.collidesWith(player) : checkCollision(player, o);
             if (collided) {
                 if (zenMode) {
@@ -247,6 +289,20 @@ function gameLoop(timestamp) {
                     sound.playPowerUp();
                 } else {
                     triggerGameOver();
+                }
+            } else {
+                // Near-miss detection
+                const dist = Math.hypot(player.x - o.x, player.y - o.y);
+                const minSafeDist = player.r + o.r + 15;
+                if (dist < minSafeDist && !o.nearMissed) {
+                    o.nearMissed = true;
+                    runStats.nearMisses++;
+                    combo++;
+                    comboTimer = 120;
+                    sound.playScore();
+                    scoreEl.innerText = score;
+                    score += 1;
+                    comboEl.innerText = combo > 1 ? `COMBO x${combo}` : '';
                 }
             }
             if (o && o.y > height + o.r) {
@@ -337,6 +393,9 @@ window.addEventListener('touchstart', (e) => {
         msgEl.style.display = 'none';
         mainMenuEl.style.display = 'none';
         uiEl.style.display = 'flex';
+        survivalTime = 0;
+        selectRandomMission();
+        missionEl.innerText = `MISSION: ${activeMission.name} - ${activeMission.description}`;
         spawnObstacle();
         spawnGem();
         spawnPowerUp();
@@ -436,6 +495,7 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') togglePause();
+    if (e.key === 'Shift') player.phase();
 });
 
 player = new Player();

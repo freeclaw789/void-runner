@@ -4,7 +4,7 @@ class Obstacle {
         this.x = random() * width;
         this.y = -this.r;
         this.trail = [];
-        this.color = '#f0f';
+        this.color = themes[currentTheme].obstacle;
     }
     updateTrail() {
         this.trail.push({x: this.x, y: this.y});
@@ -42,7 +42,7 @@ class HomingMissile extends Obstacle {
         this.x = x;
         this.y = y;
         this.r = 12;
-        this.color = '#f00';
+        this.color = themes[currentTheme].homing;
     }
     update(delta) {
         this.updateTrail();
@@ -71,7 +71,7 @@ class HomingMissile extends Obstacle {
 class PortalObstacle extends Obstacle {
     constructor() {
         super();
-        this.color = '#00f';
+        this.color = themes[currentTheme].portal;
         this.r = 20;
     }
     update(delta) {
@@ -105,7 +105,7 @@ class PortalObstacle extends Obstacle {
 class SineWaveObstacle extends Obstacle {
     constructor() {
         super();
-        this.color = '#0f0';
+        this.color = themes[currentTheme].sine;
         this.amplitude = 50 + random() * 50;
         this.frequency = 0.01 + random() * 0.01;
         this.phase = random() * Math.PI * 2;
@@ -129,7 +129,7 @@ class SineWaveObstacle extends Obstacle {
 class PulsingObstacle extends Obstacle {
     constructor() {
         super();
-        this.color = '#ff0';
+        this.color = themes[currentTheme].pulsing;
         this.baseR = this.r;
         this.pulseSpeed = 0.05 + random() * 0.05;
         this.pulseAmount = 5 + random() * 10;
@@ -159,7 +159,7 @@ class Boss extends Obstacle {
         this.health = 10;
         this.maxHealth = 10;
         this.dir = 1;
-        this.color = '#f0f';
+        this.color = themes[currentTheme].boss;
         this.moveSpeed = 2;
     }
     update(delta) {
@@ -277,7 +277,7 @@ class Wave {
 
 function spawnObstacle() {
     if (gameActive) {
-        if (random() < 0.10 && score > 50) {
+        if (random() < difficulty.waveProbability && score > 50) {
             const waveObstacles = Wave.triggerRandomWave(currentSector);
             obstacles.push(...waveObstacles);
         } else {
