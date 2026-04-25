@@ -30,6 +30,14 @@
             <div id="instr-btn">HOW TO PLAY</div>
             <div id="settings-btn">SETTINGS</div>
         </div>
+
+        <div id="profiler-ui" style="display: none; position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); color: #0f0; font-family: monospace; padding: 10px; border: 1px solid #0f0; z-index: 100; pointer-events: none; font-size: 12px; line-height: 1.4; box-shadow: 0 0 10px rgba(0,255,0,0.3);">
+            <div style="font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #0f0;">SYSTEM PROFILER</div>
+            <div>FPS: <span id="prof-fps">0</span></div>
+            <div>MEM: <span id="prof-mem">N/A</span></div>
+            <div>OBJ: <span id="prof-obj">0</span></div>
+        </div>
+
         <div id="settings-menu">
             <h2>SETTINGS</h2>
             <div class="setting-item">
@@ -51,6 +59,10 @@
             <div class="setting-item">
                 <span>ZEN MODE</span>
                 <input type="checkbox" id="zenmode-toggle">
+            </div>
+            <div class="setting-item">
+                <span>PERFORMANCE PROFILER</span>
+                <input type="checkbox" id="profiler-toggle">
             </div>
             <div id="close-settings">CLOSE</div>
         </div>
@@ -108,9 +120,17 @@
             <div id="msg"></div>
         </div>
     </div>
+    <script src="state.js"></script>
+    <script src="utils.js"></script>
+    <script src="audio.js"></script>
+    <script src="player.js"></script>
+    <script src="enemies.js"></script>
+    <script src="entities.js"></script>
+    <script src="ui.js"></script>
     <script src="achievements.js"></script>
     <script src="hazards.js"></script>
     <script src="shop.js"></script>
+    <script src="difficulty.js"></script>
     <script src="game.js"></script>
 </body>
 </html>

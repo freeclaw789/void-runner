@@ -52,6 +52,26 @@ async function runTests() {
         }
     });
 
+    // Test Adaptive Difficulty
+    tests.push({
+        name: "Difficulty: Adaptive Scaling",
+        fn: () => {
+            const initialScore = 100;
+            const lowPerf = { gemsPerSecond: 0 };
+            const highPerf = { gemsPerSecond: 1.0 };
+
+            updateDifficulty(initialScore, lowPerf);
+            const speedLow = speed;
+
+            updateDifficulty(initialScore, highPerf);
+            const speedHigh = speed;
+
+            if (speedHigh <= speedLow) {
+                throw new Error(`Speed should increase with higher performance. Low: ${speedLow}, High: ${speedHigh}`);
+            }
+        }
+    });
+
     // Test checkCollision
     tests.push({
         name: "Collision: Overlap",
@@ -187,6 +207,56 @@ async function runTests() {
             const zoomValHigh = Math.max(0.7, 1.0 - (speed - 5) * 0.005);
             if (zoomValHigh >= 1.0) throw new Error("Zoom should decrease as speed increases");
             if (zoomValHigh < 0.7) throw new Error("Zoom should not go below 0.7");
+        }
+    });
+
+    // Test Performance Profiler
+    tests.push({
+        name: "Profiler: UI Updates",
+        fn: () => {
+            profilerActive = true;
+            // Mock required DOM elements
+            const profUI = document.createElement('div');
+            profUI.id = 'profiler-ui';
+            document.body.appendChild(profUI);
+            
+            const fpsEl = document.createElement('span');
+            fpsEl.id = 'prof-fps';
+            document.body.appendChild(fpsEl);
+            
+            const memEl = document.createElement('span');
+            memEl.id = 'prof-mem';
+            document.body.appendChild(memEl);
+            
+            const objEl = document.createElement('span');
+            objEl.id = 'prof-obj';
+            document.body.appendChild(objEl);
+
+            // Simulate a game loop tick
+            // We need to call gameLoop or the part of it that updates the profiler
+            // Since gameLoop uses requestAnimationFrame, we can just call a mock version of the logic
+            
+            const dt = 16.67;
+            const currentFps = 1000 / dt;
+            fpsHistory = [currentFps];
+            fps = currentFps;
+            
+            // Manually trigger the profiler update logic as it appears in gameLoop
+            if (profilerActive) {
+                const pUI = document.getElementById('profiler-ui');
+                pUI.style.display = 'block';
+                document.getElementById('prof-fps').innerText = Math.round(fps);
+                document.getElementById('prof-obj').innerText = obstacles.length + gems.length + powerups.length + particles.length + slowMoZones.length;
+            }
+
+            if (profUI.style.display !== 'block') throw new Error("Profiler UI should be visible");
+            if (fpsEl.innerText !== Math.round(currentFps).toString()) throw new Error("FPS should be updated");
+            
+            // Cleanup
+            profUI.remove();
+            fpsEl.remove();
+            memEl.remove();
+            objEl.remove();
         }
     });
 

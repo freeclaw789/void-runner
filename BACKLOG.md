@@ -1,5 +1,12 @@
 # BACKLOG - Improvements
 
+## Context & Efficiency
+- [x] Modularize Game Architecture (Split `game.js` into `player.js`, `enemies.js`, `ui.js`, `main.js`)
+- [ ] Implement Strategic Memory Management (Summarize lessons to `MEMORY.md` and purge raw logs)
+- [ ] Adopt Atomic Tasking for very large features (Break down complex goals into smaller sub-tasks)
+- [ ] Enforce Pre-Flight Validation (Mandatory `verify_syntax.sh` and test run before every push)
+- [ ] Optimize Cron Job Workflow (Process one backlog item per run to avoid iteration limits)
+
 - [x] Add particle effects when obstacles are passed or when player dies
 - [x] Add particle effects when obstacles are passed or when player dies
 - [x] Implement a 'Combo' system for near-misses
@@ -74,7 +81,7 @@
 - [x] Implement visual shield effect and timer decay for Shield power-up
 - [x] Implement "Sine-wave" obstacles that move horizontally
 - [x] Add toast notifications for unlocked achievements
-    - [x] Implement frame-rate independent movement for all game objects (use delta)
+- [x] Implement frame-rate independent movement for all game objects (use delta)
 - [x] Add "Bloom" post-processing effect for neon visuals
 - [x] Create sector-specific music variations (tempo/pitch shifts)
 - [x] Add high-score celebration animation
@@ -91,8 +98,20 @@
 - [x] Implement "Dynamic Camera Zoom" (camera pulls back slightly as speed increases)
 - [x] Add "Advanced Audio Settings" (separate sliders for Music, SFX, and Master volume)
 - [x] Create "Shareable Score Cards" (generate a text/image summary of the run to copy to clipboard)
-- [ ] Implement "Sector-Specific Background Music" (each sector has its own unique loop)
-- [ ] Add "Performance Profiler" (internal tool to monitor FPS and memory leaks during extended sessions)
+- [x] Implement "Sector-Specific Background Music" (each sector has its own unique loop)
+- [x] Add "Performance Profiler" (internal tool to monitor FPS and memory leaks during extended sessions)
+
+## Phase: Eternal Void
+- [x] Implement "Daily Seeded Runs" (everyone plays the same obstacle pattern for a day)
+- [ ] Add "Adaptive Difficulty" (AI that adjusts obstacle density based on player skill in real-time)
+- [ ] Implement "Challenge Missions" (e.g., "Survive 30 seconds without collecting gems")
+- [ ] Add "Visual Themes" (switch between Neon, Retro-Wireframe, and Organic styles)
+- [ ] Implement "Advanced Player Movement" (e.g., a 'phase' ability to pass through one obstacle)
+- [ ] Add "Dynamic Obstacle Interaction" (obstacles that collide and explode)
+- [ ] Implement "Replay System" (record a run and play it back)
+- [ ] Add "Tutorial Levels" (short, guided segments to teach mechanics)
+- [ ] Implement "Global Leaderboard" (Mock API integration for worldwide rankings)
+- [ ] Add "End-of-Run Statistics" (Detailed breakdown: distance, gems collected, near-misses, etc.)
 
 **Backlog Maintenance Rule:**
 If the backlog ever empties, the next backlog item is to generate 10 more items for the backlog. This can include new game features, polish for existing features, other game improvements, performance improvements, stability improvements, or tests and ops improvements. Or anything else to push the game forward.
