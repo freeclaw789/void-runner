@@ -12,6 +12,7 @@ let survivalTime = 0;
 let gemsInWindow = 0;
 let lastDifficultyUpdate = 0;
 let currentSector = 0;
+let lastSector = 0;
 let combo = 1;
 let comboTimer = 0;
 let runStats = { distance: 0, gems: 0, nearMisses: 0, powerups: 0 };
@@ -23,7 +24,13 @@ let obstacles = [];
 let gems = [];
 let powerups = [];
 let slowMoZones = [];
+let gravityWells = [];
 let particles = [];
+let recording = [];
+let isReplaying = false;
+let replayFrame = 0;
+let currentReplaySeed = 0;
+let currentReplay = null;
 
 // Hazards
 let solarFlareActive = false, solarFlareTimer = 0, solarFlareWarningTimer = 0;
@@ -73,6 +80,7 @@ const themes = {
     }
 };
 
+let profilerActive = false;
 let bgPulse = 0;
 let lastClickTime = 0;
 let lastTime = 0;
@@ -97,6 +105,14 @@ let highScore = localStorage.getItem('voidRunnerHighScore') || 0;
 let totalGems = parseInt(localStorage.getItem('voidRunnerTotalGems')) || 0;
 let shieldLevel = parseInt(localStorage.getItem('voidRunnerShieldLvl')) || 1;
 let magnetLevel = parseInt(localStorage.getItem('voidRunnerMagnetLvl')) || 1;
+let currentShipClass = localStorage.getItem('voidRunnerShipClass') || 'balanced';
+
+const shipClasses = {
+    balanced: { name: 'Balanced', accel: 0.2, radius: 15, magnetMod: 1.0, shieldMod: 1.0, color: '#0ff' },
+    speed: { name: 'Speed', accel: 0.35, radius: 12, magnetMod: 0.8, shieldMod: 0.8, color: '#ff0' },
+    tank: { name: 'Tank', accel: 0.1, radius: 20, magnetMod: 0.9, shieldMod: 1.5, color: '#f0f' },
+    magnet: { name: 'Magnet', accel: 0.15, radius: 15, magnetMod: 1.5, shieldMod: 0.9, color: '#0f0' }
+};
 
 // Global Objects
 let player = null;

@@ -140,6 +140,28 @@ canvas {
     transform: scale(1.2);
 }
 
+#ship-select {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.ship-option {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #0ff;
+    cursor: pointer;
+    color: #0ff;
+    transition: 0.2s;
+}
+
+.ship-option.selected {
+    background: #0ff;
+    color: #000;
+    box-shadow: 0 0 10px #0ff;
+}
+
  #fade-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: black; opacity: 0; pointer-events: none;

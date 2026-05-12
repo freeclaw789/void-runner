@@ -1,8 +1,8 @@
 class Obstacle {
-    constructor() {
-        this.r = random() * 20 + 10;
-        this.x = random() * width;
-        this.y = -this.r;
+    constructor(x = random() * width, y = -20, r = random() * 20 + 10) {
+        this.r = r;
+        this.x = x;
+        this.y = y;
         this.trail = [];
         this.color = themes[currentTheme].obstacle;
     }
@@ -34,6 +34,44 @@ class Obstacle {
     }
 
     drawTrail() {}
+}
+
+class WallObstacle extends Obstacle {
+    constructor(x, w, r = 20) {
+        super(x, -r, r);
+        this.w = w;
+    }
+    update(delta) {
+        this.y += speed * delta;
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.rect(this.x, this.y, this.w, this.r * 2);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = safeMode ? 0 : 15;
+        ctx.shadowColor = this.color;
+        ctx.fill();
+        ctx.closePath();
+    }
+    collidesWith(player) {
+        return player.x + player.r > this.x && 
+               player.x - player.r < this.x + this.w && 
+               player.y + player.r > this.y && 
+               player.y - player.r < this.y + this.r * 2;
+    }
+}
+
+class ZigZagObstacle extends Obstacle {
+    constructor(x, r = 15) {
+        super(x, -r, r);
+        this.startX = x;
+        this.amplitude = 100;
+        this.frequency = 0.005;
+    }
+    update(delta) {
+        this.y += speed * delta;
+        this.x = this.startX + Math.sin(this.y * this.frequency) * this.amplitude;
+    }
 }
 
 class HomingMissile extends Obstacle {
@@ -275,8 +313,21 @@ class Wave {
     }
 }
 
+function createObstacleFromPattern(p) {
+    switch(p.type) {
+        case 'wall': return [new WallObstacle(p.x, p.w, p.r || 20)];
+        case 'pillar': return [new Obstacle(p.x, -p.r, p.r)];
+        case 'zig': return [new ZigZagObstacle(p.x, p.r || 15)];
+        case 'pair': return [
+            new Obstacle(width/2 - p.xOffset, -p.r, p.r),
+            new Obstacle(width/2 + p.xOffset, -p.r, p.r)
+        ];
+        default: return [new Obstacle(p.x, -p.r, p.r)];
+    }
+}
+
 function spawnObstacle() {
-    if (gameActive) {
+    if (gameActive && !activeChallenge) {
         if (random() < difficulty.waveProbability && score > 50) {
             const waveObstacles = Wave.triggerRandomWave(currentSector);
             obstacles.push(...waveObstacles);

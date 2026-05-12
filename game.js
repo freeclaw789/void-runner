@@ -1,5 +1,6 @@
 const canvas = document.getElementById('gameCanvas');
 let ctx = canvas.getContext('2d');
+let ghost = null;
 
 // Initial setup
 resize(canvas);
@@ -32,8 +33,75 @@ function handleGamepadInput() {
     }
 }
 
+function startNewGame(isDaily = false, forcedSeed = null, replaying = false) {
+    resetChallenge();
+    isDailyChallenge = isDaily;
+    const seed = forcedSeed !== null 
+        ? forcedSeed
+        : (isDaily 
+            ? parseInt(new Date().toISOString().slice(0, 10).replace(/-/g, ''))
+            : Math.floor(Math.random() * 1000000));
+    
+    setSeed(seed);
+    
+    gameActive = true;
+    if (!isDaily) { 
+        sound.playStart();
+    } else {
+        // Daily start logic
+    }
+    
+    score = 0;
+    speed = 5;
+    obstacles = [];
+    gems = [];
+    powerups = [];
+    boss = null;
+    lastBossScore = 0;
+    scoreEl.innerText = score;
+    msgEl.style.display = 'none';
+    
+    mainMenuEl.classList.add('fade-out');
+    setTimeout(() => {
+        mainMenuEl.style.display = 'none';
+        mainMenuEl.classList.remove('fade-out');
+    }, 500);
+    
+    uiEl.style.display = 'flex';
+    spawnObstacle();
+    spawnGem();
+    spawnPowerUp();
+    spawnSlowMoZone();
+    spawnSolarFlare();
+    spawnVoidStorm();
+    music.start();
+    player.targetX = width / 2;
+
+    // Reset Replay
+    recording = [];
+    isReplaying = false;
+    replayFrame = 0;
+    currentReplay = { seed, inputs: [] };
+
+    // Initialize Ghost
+    const bestRun = JSON.parse(localStorage.getItem('voidRunnerBestReplay'));
+    if (bestRun && !isReplaying) {
+        ghost = new Ghost(bestRun.inputs, bestRun.shipClass || currentShipClass);
+    } else {
+        ghost = null;
+    }
+}
 function triggerGameOver() {
     gameActive = false;
+
+    // Save recording if not replaying
+    if (!isReplaying && recording.length > 0) {
+        const runSeed = activeRng ? activeRng.seed : 0;
+        currentReplay = { seed: runSeed, inputs: [...recording] };
+        localStorage.setItem('voidRunnerLastReplay', JSON.stringify(currentReplay));
+        document.getElementById('replay-btn').style.display = 'block';
+    }
+
     shatterPlayer(player.x, player.y, player.color);
     sound.playCollision();
 
@@ -49,12 +117,31 @@ function triggerGameOver() {
         highScoreEl.innerText = `HIGH SCORE: ${highScore}`;
         player.updateSkin();
 
+        // Save Best Run for Ghost
+        if (!isReplaying && recording.length > 0) {
+            const bestRun = {
+                seed: activeRng ? activeRng.seed : 0,
+                inputs: [...recording],
+                shipClass: currentShipClass
+            };
+            localStorage.setItem('voidRunnerBestReplay', JSON.stringify(bestRun));
+        }
+
         const scores = JSON.parse(localStorage.getItem('voidRunnerLeaderboard') || '[]');
         scores.push(score);
         scores.sort((a, b) => b - a);
         const top5 = scores.slice(0, 5);
         localStorage.setItem('voidRunnerLeaderboard', JSON.stringify(top5));
         updateLeaderboard();
+
+        // Global Upload
+        const playerName = prompt('New Global High Score! Enter your name:');
+        if (playerName) {
+            globalLeaderboard.uploadScore(playerName, score).then(res => {
+                showToast('GLOBAL RANK', `Rank #${res.rank} achieved!`);
+                updateLeaderboard();
+            });
+        }
     }
 
     const statsHtml = `
@@ -91,6 +178,16 @@ function gameLoop(timestamp) {
     lastTime = timestamp;
     survivalTime += dt / 1000;
     const delta = dt / (1000 / 60);
+
+    if (!isReplaying) {
+        recording.push(player.targetX);
+    } else {
+        if (replayFrame < recording.length) {
+            player.targetX = recording[replayFrame];
+            replayFrame++;
+        }
+    }
+
     handleGamepadInput();
     const timeScale = (player.slowmoActive || player.inSlowMoZone) ? 0.5 : 1.0;
     const effectiveDelta = delta * timeScale;
@@ -127,6 +224,10 @@ function gameLoop(timestamp) {
 
     if (gamePaused) return;
 
+    if (tutorialManager.tutorialActive) {
+        tutorialManager.update(effectiveDelta);
+    }
+
     if (solarFlareWarningTimer > 0) {
         solarFlareWarningTimer -= effectiveDelta;
         if (solarFlareWarningTimer <= 0) {
@@ -152,6 +253,19 @@ function gameLoop(timestamp) {
         voidStormTimer -= delta;
         if (voidStormTimer <= 0) voidStormActive = false;
         player.targetX += voidStormDirection * 5 * delta;
+    }
+
+    // Sector-Specific Mechanics
+    if (currentSector === 2) { // Sector 3: Cyber Grid - Oscillating Wind
+        const windForce = Math.sin(timestamp / 1000) * 2;
+        player.x += windForce * delta;
+    } else if (currentSector === 3) { // Sector 4: Data Stream - Data Surge
+        if (Math.random() < 0.01 * delta) {
+            player.targetX += (Math.random() - 0.5) * 100;
+        }
+    } else if (currentSector === 4) { // Sector 5: The Core - Gravitational Pull
+        const centerPull = (width / 2 - player.x) * 0.01 * delta;
+        player.x += centerPull;
     }
 
     const sectorIdx = Math.min(currentSector, sectorConfig.length - 1);
@@ -189,6 +303,13 @@ function gameLoop(timestamp) {
     if (gameActive) {
         currentSector = Math.floor(score / 50);
         music.update(speed, score, currentSector);
+
+        // Challenge Room Spawning
+        const gameTime = survivalTime;
+        const challengeSpawns = updateChallengeSpawning(timestamp, gameTime);
+        challengeSpawns.forEach(p => {
+            obstacles.push(...createObstacleFromPattern(p));
+        });
 
         const now = Date.now();
         if (now - lastDifficultyUpdate > 1000) {
@@ -238,6 +359,14 @@ function gameLoop(timestamp) {
             zone.update(effectiveDelta);
             zone.draw();
             if (zone.y > height + zone.h) slowMoZones.splice(i, 1);
+        }
+
+        for (let i = gravityWells.length - 1; i >= 0; i--) {
+            const well = gravityWells[i];
+            well.update(effectiveDelta);
+            well.draw();
+            well.applyForce(player);
+            if (well.y > height + well.r * 2) gravityWells.splice(i, 1);
         }
 
         if (score > 0 && score % 250 === 0 && lastBossScore !== score) {
@@ -366,6 +495,10 @@ function gameLoop(timestamp) {
         });
     } else {
         player.draw();
+        if (ghost) {
+            ghost.update(effectiveDelta);
+            ghost.draw(ctx);
+        }
     }
     drawBloom();
     ctx.restore();
@@ -418,7 +551,7 @@ const dailyBtn = document.getElementById('daily-btn');
 dailyBtn.addEventListener('click', () => {
     isDailyChallenge = true;
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    dailyRng = new SeededRandom(parseInt(today));
+    setSeed(parseInt(today));
     
     gameActive = true;
     sound.playStart();

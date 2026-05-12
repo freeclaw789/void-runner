@@ -8,11 +8,18 @@ class SeededRandom {
     }
 }
 
-let isDailyChallenge = false;
-let dailyRng = null;
+let activeRng = null;
+
+function setSeed(seed) {
+    activeRng = new SeededRandom(seed);
+}
+
+function clearSeed() {
+    activeRng = null;
+}
 
 function random() {
-    return (isDailyChallenge && dailyRng) ? dailyRng.next() : Math.random();
+    return activeRng ? activeRng.next() : Math.random();
 }
 
 function resize(canvas) {

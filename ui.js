@@ -15,7 +15,26 @@ const pauseBtn = document.getElementById('pause-btn');
 const pauseMenu = document.getElementById('pause-menu');
 const resumeBtn = document.getElementById('resume-btn');
 const muteBtn = document.getElementById('mute-btn');
+const replayBtn = document.getElementById('replay-btn');
+const challengeBtn = document.getElementById('challenge-btn');
 const shareBtn = document.getElementById('share-btn');
+const tutorialBtn = document.getElementById('tutorial-btn');
+
+function replayLastRun() {
+    const data = localStorage.getItem('voidRunnerLastReplay');
+    if (!data) return;
+    
+    const replay = JSON.parse(data);
+    const seed = replay.seed;
+    const inputs = replay.inputs;
+    
+    recording = inputs;
+    isReplaying = true;
+    replayFrame = 0;
+    
+    startNewGame(false, seed, true);
+    showToast('REPLAY', 'Replaying last run...');
+}
 const restartBtn = document.getElementById('restart-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const settingsMenu = document.getElementById('settings-menu');
@@ -66,6 +85,14 @@ function updateLeaderboard() {
     const scores = JSON.parse(localStorage.getItem('voidRunnerLeaderboard') || '[]');
     leaderboardEl.innerHTML = 'TOP RUNS<br>' + 
         (scores.length ? scores.map((s, i) => `${i+1}. ${s}`).join('<br>') : 'NO DATA');
+    
+    // Async load global scores
+    globalLeaderboard.fetchGlobalScores().then(globalScores => {
+        const globalHtml = globalScores.map((s, i) => `${i+1}. ${s.name}: ${s.score}`).join('<br>');
+        leaderboardEl.innerHTML = 'TOP RUNS<br>' + 
+            (scores.length ? scores.map((s, i) => `${i+1}. ${s}`).join('<br>') : 'NO DATA') + 
+            '<br><br>GLOBAL<br>' + globalHtml;
+    });
 }
 
 function toggleMute() {
@@ -88,6 +115,19 @@ function togglePause() {
 
 // Event Listeners
 shareBtn.addEventListener('click', shareScore);
+replayBtn.addEventListener('click', replayLastRun);
+challengeBtn.addEventListener('click', () => {
+    mainMenuEl.style.display = 'none';
+    uiEl.style.display = 'flex';
+    gameActive = true;
+    const challenge = selectChallenge('gauntlet');
+    showToast('CHALLENGE', `Entering ${challenge.name}...`);
+    startNewGame(false, 12345, false);
+    // We need to trigger the challenge logic, but since startNewGame resets everything, 
+    // we call selectChallenge again or ensure state is preserved
+    selectChallenge('gauntlet');
+});
+pauseBtn.addEventListener('click', togglePause);
 pauseBtn.addEventListener('click', togglePause);
 resumeBtn.addEventListener('click', togglePause);
 muteBtn.addEventListener('click', toggleMute);
@@ -97,6 +137,13 @@ restartBtn.addEventListener('click', () => {
     gameActive = false;
     mainMenuEl.style.display = 'flex';
     uiEl.style.display = 'none';
+});
+
+tutorialBtn.addEventListener('click', () => {
+    mainMenuEl.style.display = 'none';
+    uiEl.style.display = 'flex';
+    gameActive = true;
+    tutorialManager.start();
 });
 
 instrBtn.addEventListener('click', () => {
@@ -175,6 +222,22 @@ colorOptions.forEach(opt => {
     });
 });
 
+const shipOptions = document.querySelectorAll('.ship-option');
+shipOptions.forEach(opt => {
+    opt.addEventListener('click', () => {
+        shipOptions.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        const ship = opt.getAttribute('data-ship');
+        currentShipClass = ship;
+        localStorage.setItem('voidRunnerShipClass', ship);
+        if (player) {
+            const shipData = shipClasses[ship];
+            player.r = shipData.radius;
+            player.updateSkin();
+        }
+    });
+});
+
 // Load settings
 function loadUISettings() {
     const savedTheme = localStorage.getItem('voidRunnerTheme');
@@ -216,5 +279,12 @@ function loadUISettings() {
     if (savedProfiler !== null) {
         profilerActive = savedProfiler === 'true';
         profilerToggle.checked = profilerActive;
+    }
+
+    const savedShip = localStorage.getItem('voidRunnerShipClass') || 'balanced';
+    const shipOpt = document.querySelector(`.ship-option[data-ship="${savedShip}"]`);
+    if (shipOpt) {
+        document.querySelectorAll('.ship-option').forEach(o => o.classList.remove('selected'));
+        shipOpt.classList.add('selected');
     }
 }

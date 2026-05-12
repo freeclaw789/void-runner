@@ -107,6 +107,47 @@ class SlowMoZone {
     }
 }
 
+class GravityWell {
+    constructor() {
+        this.r = random() * 50 + 50;
+        this.x = random() * width;
+        this.y = -this.r * 2;
+        this.strength = random() * 0.05 + 0.02;
+        this.color = 'rgba(150, 0, 255, 0.3)';
+        this.glowColor = 'rgba(200, 100, 255, 0.6)';
+    }
+    update(delta) {
+        this.y += speed * 0.6 * delta;
+    }
+    draw() {
+        ctx.save();
+        const pulse = Math.sin(Date.now() / 200) * 5;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r + pulse, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = safeMode ? 0 : 20;
+        ctx.shadowColor = this.glowColor;
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r * 0.6 + pulse * 0.5, 0, Math.PI * 2);
+        ctx.strokeStyle = this.glowColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+    }
+    applyForce(p) {
+        const dx = this.x - p.x;
+        const dy = this.y - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < this.r * 3) {
+            const force = (1 - dist / (this.r * 3)) * this.strength;
+            p.x += dx * force;
+            p.y += dy * force;
+        }
+    }
+}
+
 class Particle {
     constructor(x, y, color) {
         this.x = x;
@@ -191,6 +232,13 @@ function spawnSlowMoZone() {
     }
 }
 
+function spawnGravityWell() {
+    if (gameActive) {
+        gravityWells.push(new GravityWell());
+        setTimeout(spawnGravityWell, 15000 + random() * 20000);
+    }
+}
+
 function drawGameEntities(targetCtx, offsetX = 0, offsetY = 0) {
     targetCtx.beginPath();
     targetCtx.arc(player.x + offsetX, player.y + offsetY, player.r, 0, Math.PI * 2);
@@ -219,7 +267,38 @@ function drawGameEntities(targetCtx, offsetX = 0, offsetY = 0) {
     });
 }
 
-function drawBloom() {
+class Ghost {
+    constructor(recording, shipClass) {
+        this.recording = recording;
+        this.frame = 0;
+        this.x = width / 2;
+        this.y = height * 0.8;
+        this.r = shipClasses[shipClass]?.radius || 15;
+        this.color = 'rgba(200, 200, 200, 0.4)';
+        this.accel = shipClasses[shipClass]?.accel || 0.1;
+    }
+
+    update(delta) {
+        if (this.frame < this.recording.length) {
+            const targetX = this.recording[this.frame];
+            let diff = targetX - this.x;
+            // Ghost doesn't wrap for simplicity unless we want to match perfectly
+            this.x += diff * (this.accel * delta);
+            this.frame++;
+        }
+    }
+
+    draw(ctx) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+        ctx.restore();
+    }
+}
+
     if (safeMode) return;
     
     const aberrationOffset = (speed - 5) * 0.8;

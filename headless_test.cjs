@@ -3,8 +3,6 @@ const fs = require('fs');
 const path = require('path');
 
 const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-const gameJs = fs.readFileSync(path.join(__dirname, 'game.js'), 'utf8');
-const achievementsJs = fs.readFileSync(path.join(__dirname, 'achievements.js'), 'utf8');
 
 const dom = new JSDOM(html, {
     url: "http://localhost",
@@ -83,23 +81,36 @@ global.AudioContext = window.AudioContext;
 global.webkitAudioContext = window.webkitAudioContext;
 global.requestAnimationFrame = window.requestAnimationFrame;
 
-// Execute game.js in the window context
+// List of scripts to load in order
+const scripts = [
+    'state.js',
+    'utils.js',
+    'audio.js',
+    'player.js',
+    'enemies.js',
+    'entities.js',
+    'global_leaderboard.js',
+    'ui.js',
+    'achievements.js',
+    'hazards.js',
+    'shop.js',
+    'difficulty.js',
+    'missions.js',
+    'tutorial.js',
+    'game.js'
+];
+
 try {
-    // We wrap the gameJs to ensure it's executed in the window context
-    // and capture any errors
-    const wrappedJs = `
-        try {
-            ${gameJs}
-            console.log("INTERNAL_GAME_LOADED");
-        } catch (e) {
-            console.error("INTERNAL_GAME_ERROR:", e);
-            throw e;
-        }
-    `;
-    window.eval(wrappedJs);
-    console.log("✅ game.js eval successful");
+    scripts.forEach(script => {
+        const content = fs.readFileSync(path.join(__dirname, script), 'utf8');
+        const scriptEl = document.createElement('script');
+        scriptEl.textContent = content;
+        document.body.appendChild(scriptEl);
+        console.log(`✅ ${script} loaded`);
+    });
+    console.log("🚀 All game scripts loaded successfully");
 } catch (e) {
-    console.error("❌ Error during game.js eval:", e);
+    console.error("❌ Error during script loading:", e);
     process.exit(1);
 }
 

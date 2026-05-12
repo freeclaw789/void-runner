@@ -4,7 +4,7 @@
 - [x] Modularize Game Architecture (Split `game.js` into `player.js`, `enemies.js`, `ui.js`, `main.js`)
 - [ ] Implement Strategic Memory Management (Summarize lessons to `MEMORY.md` and purge raw logs)
 - [ ] Adopt Atomic Tasking for very large features (Break down complex goals into smaller sub-tasks)
-- [ ] Enforce Pre-Flight Validation (Mandatory `verify_syntax.sh` and test run before every push)
+- [x] Enforce Pre-Flight Validation (Mandatory `verify_syntax.sh` and test run before every push)
 - [ ] Optimize Cron Job Workflow (Process one backlog item per run to avoid iteration limits)
 
 - [x] Add particle effects when obstacles are passed or when player dies
@@ -108,10 +108,22 @@
 - [x] Add "Visual Themes" (switch between Neon, Retro-Wireframe, and Organic styles)
 - [x] Implement "Advanced Player Movement" (e.g., a 'phase' ability to pass through one obstacle)
 - [x] Add "Dynamic Obstacle Interaction" (obstacles that collide and explode)
-- [ ] Implement "Replay System" (record a run and play it back)
-- [ ] Add "Tutorial Levels" (short, guided segments to teach mechanics)
-- [ ] Implement "Global Leaderboard" (Mock API integration for worldwide rankings)
+- [x] Implement "Replay System" (record a run and play it back)
+- [x] Add "Tutorial Levels" (short, guided segments to teach mechanics)
+- [x] Implement "Global Leaderboard" (Mock API integration for worldwide rankings)
 - [x] Add "End-of-Run Statistics" (Detailed breakdown: distance, gems collected, near-misses, etc.)
+
+## Phase: Void Evolution
+- [x] Implement "Ship Classes" (choose between Speed, Tank, and Magnet ships)
+- [x] Add "Environmental Hazards" (e.g., gravitational wells that pull the player)
+- [x] Implement a "Ghost" system (replay of the player's personal best run)
+- [ ] Create "Challenge Rooms" (short, focused obstacle courses)
+- [ ] Add "Visual Polish: Screen Distortion" (distortion effect when moving at extreme speeds)
+- [ ] Implement "Dynamic Obstacle Interactions" (obstacles that can destroy each other or merge)
+- [ ] Add "Achievement-based Rewards" (spending achievement points on cosmetics)
+- [ ] Implement "Advanced Bosses" (bosses with multiple phases and attack patterns)
+- [ ] Add "Combo-based Visuals" (the player glows brighter as the combo increases)
+- [ ] Implement "Sector-Specific Mechanics" (e.g., sector 3 has wind that pushes the player)
 
 **Backlog Maintenance Rule:**
 If the backlog ever empties, the next backlog item is to generate 10 more items for the backlog. This can include new game features, polish for existing features, other game improvements, performance improvements, stability improvements, or tests and ops improvements. Or anything else to push the game forward.

@@ -1,8 +1,9 @@
 class Player {
     constructor() {
+        const ship = shipClasses[currentShipClass];
         this.x = width / 2;
         this.y = height * 0.8;
-        this.r = 15;
+        this.r = ship.radius;
         this.targetX = this.x;
         this.magnetActive = false;
         this.magnetTimer = 0;
@@ -14,7 +15,8 @@ class Player {
         this.trail = [];
         this.dashActive = false;
         this.dashTimer = 0;
-        this.customColor = localStorage.getItem('voidRunnerPlayerColor') || '#0ff';
+        this.dashTriggered = false;
+        this.customColor = localStorage.getItem('voidRunnerPlayerColor') || ship.color;
         this.updateSkin();
     }
 
@@ -50,11 +52,12 @@ class Player {
     }
 
     update(delta) {
+        const ship = shipClasses[currentShipClass];
         let diff = this.targetX - this.x;
         if (this.wrapActive && Math.abs(diff) > width / 2) {
             diff -= Math.sign(diff) * width;
         }
-        this.x += diff * (0.2 * delta);
+        this.x += diff * (ship.accel * delta);
         
         if (this.dashActive) {
             this.dashTimer -= delta;
@@ -111,11 +114,13 @@ class Player {
     }
 
     getMagnetRange() {
-        return 150 + (magnetLevel - 1) * 50;
+        const ship = shipClasses[currentShipClass];
+        return (150 + (magnetLevel - 1) * 50) * ship.magnetMod;
     }
 
     getPowerupDuration() {
-        return 600 + (shieldLevel - 1) * 100;
+        const ship = shipClasses[currentShipClass];
+        return (600 + (shieldLevel - 1) * 100) * ship.shieldMod;
     }
 
     draw() {
@@ -141,7 +146,8 @@ class Player {
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
         ctx.fillStyle = this.magnetActive ? '#ff0' : this.color;
         if (!safeMode) {
-            ctx.shadowBlur = this.magnetActive ? 25 : 15;
+            const comboGlow = Math.min(50, 15 + (combo - 1) * 5);
+            ctx.shadowBlur = this.magnetActive ? 25 : comboGlow;
             ctx.shadowColor = this.magnetActive ? '#ff0' : this.glow;
         } else {
             ctx.shadowBlur = 0;
